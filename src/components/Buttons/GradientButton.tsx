@@ -10,10 +10,11 @@ const GradientButton = (props:ButtonProps) => {
     const {text} = props;
   return (
     <LinearGradient 
-      colors={['#DE5461', '#581415']}
+      colors={['#656263','#242021']}
+      // colors={['#DE5461', '#581415']}
       start={{ x: 0, y: 0 }} // Starting point (left)
       end={{ x: 1, y: 0 }}
-      style={{ borderRadius: 6, borderColor: '#DF5461', borderWidth: 1.5, paddingHorizontal: 20, paddingVertical: 4}}
+      style={{ borderRadius: 6, borderColor: '#707070', borderWidth: 1.5, paddingHorizontal: 20, paddingVertical: 4}}
     >
       <Text style={{color: 'white',fontFamily: 'Bh-Bold', fontSize: 13}}>{text}</Text>
     </LinearGradient>

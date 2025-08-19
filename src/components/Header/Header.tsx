@@ -21,7 +21,8 @@ const Header = () => {
           </View>
         </View>
         <View style={styles.rowBetweenCenter}>
-          <GradientButton text="Monthly" />
+          {/* <GradientButton text="Monthly" /> */}
+          <GradientButton text="Guest user" />
           <View style={styles.trailIcon}>
             <Text
               style={{

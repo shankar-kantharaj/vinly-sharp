@@ -1,13 +1,60 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import HomeScreen from "../screens/Main/HomeScreen/HomeScreen"
-import RecommendedScreen from "../screens/Main/Recommended/Recommended"
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from '../screens/Main/HomeScreen/HomeScreen';
+import RecommendedScreen from '../screens/Main/Recommended/Recommended';
+import SplashScreen from '../screens/Auth/SplashScreen/SplashScreen';
+import WelcomeToVinyl from '../screens/Auth/WelcomeToVinyl/WelcomeToVinyl';
+import GroupExperience from '../screens/Main/GroupExperience/GroupExperience';
 
-const StackNavigator3 = createNativeStackNavigator()
-export const HomeStack = () => {
-  return (
-    <StackNavigator3.Navigator initialRouteName='HomeScreen'>
-      <StackNavigator3.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-      <StackNavigator3.Screen name="RecommendedScreen" component={RecommendedScreen} options={{ headerShown: false }} />
-    </StackNavigator3.Navigator>
-  )
-}
+// Auth Stack Navigator
+const StackNavigator1 = createNativeStackNavigator();
+export const AuthStack = () => (
+  <StackNavigator1.Navigator initialRouteName="SplashScreen">
+    <StackNavigator1.Screen
+      name="SplashScreen"
+      component={SplashScreen}
+      options={{ headerShown: false }}
+    />
+    <StackNavigator1.Screen
+      name="WelcomeToVinyl"
+      component={WelcomeToVinyl}
+      options={{ headerShown: false }}
+    />
+  </StackNavigator1.Navigator>
+);
+
+// Home Stack Navigator
+const StackNavigator2 = createNativeStackNavigator();
+export const HomeStack = () => (
+  <StackNavigator2.Navigator initialRouteName="HomeScreen">
+    <StackNavigator2.Screen
+      name="HomeScreen"
+      component={HomeScreen}
+      options={{ headerShown: false }}
+    />
+    <StackNavigator2.Screen
+      name="RecommendedScreen"
+      component={RecommendedScreen}
+      options={{ headerShown: false }}
+    />
+  </StackNavigator2.Navigator>
+);
+
+// Group Experience Stack Navigator
+const StackNavigator3 = createNativeStackNavigator();
+export const GroupExperienceStack = () => (
+  <StackNavigator3.Navigator
+    initialRouteName="GroupExperience"
+    screenOptions={{
+      
+    }}
+    // screenOptions={({ route }) => ({
+    //   tabBarVisible: route.name !== 'GroupExperience', // Hide the tab bar if on GroupExperience screen
+    // })}
+  >
+    <StackNavigator3.Screen
+      name="GroupExperience"
+      component={GroupExperience}
+      options={{ headerShown: false }}
+    />
+  </StackNavigator3.Navigator>
+);
