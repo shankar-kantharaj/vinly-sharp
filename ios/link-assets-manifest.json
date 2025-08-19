@@ -1,0 +1,45 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Bh-Bold.otf",
+      "sha1": "2e40b6bf77aaf055900ba2aa9b231645904f9820"
+    },
+    {
+      "path": "src/assets/fonts/Bh-Italic.ttf",
+      "sha1": "ecb122af453f264f7579f385a53e23e29c0b1e47"
+    },
+    {
+      "path": "src/assets/fonts/Bh-Regular.ttf",
+      "sha1": "3cd147ee675cb30024ecc66648b769a7fb7d8a1c"
+    },
+    {
+      "path": "src/assets/fonts/Futura-Bold.ttf",
+      "sha1": "2989a119b87e505033ded08ecd3fefd5ec4ae52e"
+    },
+    {
+      "path": "src/assets/fonts/Futura-Book.ttf",
+      "sha1": "b7b19190884328e2a0a90b72c7546a135128f7d6"
+    },
+    {
+      "path": "src/assets/fonts/Futura-Demi.ttf",
+      "sha1": "6349a64f7a95756f3f43a350166e7d7e47c7c660"
+    },
+    {
+      "path": "src/assets/fonts/Futura-ExtraBold.ttf",
+      "sha1": "f6ee553abbdc01280d2c374c532e087838dd3095"
+    },
+    {
+      "path": "src/assets/fonts/Futura-Heavy.ttf",
+      "sha1": "1de37ec5788fa3ec00ae2197f34069f5144d29ee"
+    },
+    {
+      "path": "src/assets/fonts/Futura-Light.ttf",
+      "sha1": "cf54cf45625a4810cb2c2aefe285840732d64496"
+    },
+    {
+      "path": "src/assets/fonts/Futura-Medium.ttf",
+      "sha1": "b69396104293cc9419fc4ab87a6ee64c9faaf9fa"
+    }
+  ]
+}
