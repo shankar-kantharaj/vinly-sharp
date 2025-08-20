@@ -1,11 +1,14 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef, useState } from 'react';
 import GradientButton from '../Buttons/GradientButton';
 import { styles } from './HeaderStyles';
-import { TextInput } from 'react-native-gesture-handler';
 import SearchModal from '../SearchModal/SearchModal';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import FilterCafeBottomSheet from '../FilterCafeBottomSheet/FilterCafeBottomSheet';
 
 const Header = () => {
+  const height = Dimensions.get('window').height;
+  const refRBSheet = useRef(null);
   const [showSearchModal, setShowSearchModal] = useState(false);
   return (
     <View style={{ paddingVertical: 15 }}>
@@ -38,17 +41,29 @@ const Header = () => {
         </View>
       </View>
       <View style={[styles.rowBetweenCenter, { marginTop: 13 }]}>
-        <TouchableOpacity activeOpacity={0.8}  onPress={()=>{setShowSearchModal(!showSearchModal)}} style={styles.searchBarOutline}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            setShowSearchModal(!showSearchModal);
+          }}
+          style={styles.searchBarOutline}
+        >
           <Image
             source={require('../../assets/images/search.png')}
             style={styles.searchIcon}
           />
           <Text style={styles.searchInput}>Cafe, mood, location..</Text>
         </TouchableOpacity>
-        <Image
-          source={require('../../assets/images/filter.png')}
-          style={styles.filterIcon}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            refRBSheet.current.open();
+          }}
+        >
+          <Image
+            source={require('../../assets/images/filter.png')}
+            style={styles.filterIcon}
+          />
+        </TouchableOpacity>
       </View>
 
       <SearchModal
@@ -56,7 +71,29 @@ const Header = () => {
         onClose={() => {
           setShowSearchModal(false);
         }}
-      />
+      /> 
+      <RBSheet
+        ref={refRBSheet} 
+        height={height * 0.65}
+        customStyles={{
+          container:{backgroundColor: '#211f20', borderTopRightRadius: 20, borderTopLeftRadius: 20},
+          wrapper: {
+            backgroundColor: 'transparent',
+          },
+          draggableIcon: {
+            backgroundColor: '#000',
+          },
+        }}
+        customModalProps={{
+          animationType: 'slide',
+          statusBarTranslucent: true,
+        }}
+        customAvoidingViewProps={{
+          enabled: false,
+        }}
+      >
+       <FilterCafeBottomSheet />
+      </RBSheet>
     </View>
   );
 };

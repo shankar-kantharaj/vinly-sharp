@@ -1,13 +1,15 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useRef } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { backgroundGradientColors } from '../../../constants/colors';
 import { styles } from './HomeStyles';
 import Header from '../../../components/Header/Header';
 import Recommendation from './Sections/Recommendation/Recommendation';
 import ExploreCafeSpaces from './Sections/ExploreCafeSpaces/ExploreCafeSpaces';
+import BottomSheet from '@gorhom/bottom-sheet';
 
 const HomeScreen = () => {
+
   return (
     <LinearGradient
       // colors={}
@@ -21,6 +23,7 @@ const HomeScreen = () => {
         <Recommendation />
         <ExploreCafeSpaces />
       </ScrollView>
+     
     </LinearGradient>
   );
 };

@@ -3,45 +3,42 @@ import React from 'react';
 import { futura } from '../../constants/fonts_exports';
 // import { styles } from './CafeCardStyles'
 
-const CafeCard = () => {
+// Define types for the props
+interface CafeCardProps {
+  cafeName: string;
+  cafeAddress: string;
+  cafeImage: any; // Image source can be either a static import or URL (use `any` type for flexibility)
+  isFavorite: boolean;
+}
+
+// CafeCard Component
+const CafeCard: React.FC<CafeCardProps> = ({ cafeName, cafeAddress, cafeImage, isFavorite }) => {
   return (
     <View style={styles.cardOutline}>
+      {/* Row for cafe name, address, and heart icon */}
       <View style={styles.rowBetweenCenter}>
         <View>
-          <Text style={styles.cafeName}>The Cozy Corner</Text>
-          <Text style={styles.cafeAddress}>
-            42nd Main, Sector 2, 12th Cross Road Whitefield
-          </Text>
+          <Text style={styles.cafeName}>{cafeName}</Text>
+          <Text style={styles.cafeAddress}>{cafeAddress}</Text>
         </View>
-        <View
-          style={{
-            // marginTop: 5,
-            // borderColor: '#867f78',
-            // borderWidth: 1.5,
-            // height: 40,
-            // width: 43,
-            // borderRadius: 10, 
-            // justifyContent: 'center',
-            // alignItems: 'center',
-          }}
-        >
-          <Image
-            source={require('../../assets/images/heart-active.png')}
-            style={{ height: 25, width: 25, resizeMode: 'contain' }}
-          />
-        </View>
+
+        {/* Heart icon indicating whether the cafe is a favorite */}
+        <Image
+          source={isFavorite ? require('../../assets/images/heart-active.png') : require('../../assets/images/heart-inactive.png')}
+          style={{ height: 25, width: 25, resizeMode: 'contain' }}
+        />
       </View>
 
-      {/* Cafe image section below */}
-      <View
-        style={[
-          styles.ImageOutline,
-          { height: 170, width: '100%', alignItems: 'center', marginTop: 12,},
-        ]}
-      >
+      {/* Cafe image section */}
+      <View style={[styles.ImageOutline, { height: 170, width: '100%', alignItems: 'center', marginTop: 12 }]}>
         <Image
-          source={require('../../assets/images/cafe-image-rec.png')}
-          style={{ height: '100%', width: '100%', resizeMode: 'cover',borderRadius: 8 }}
+          source={cafeImage}
+          style={{
+            height: '100%',
+            width: '100%',
+            resizeMode: 'cover',
+            borderRadius: 8,
+          }}
         />
         <View style={styles.flagshipOutline}>
           <Text style={styles.flagshipText}>Book Now</Text>
@@ -65,7 +62,7 @@ const styles = StyleSheet.create({
     // borderColor: '#ECEBDB',
     borderColor: '#845555',
     borderWidth: 2,
-    paddingVertical: 8, 
+    paddingVertical: 8,
     paddingHorizontal: 15,
     marginTop: 15,
   },

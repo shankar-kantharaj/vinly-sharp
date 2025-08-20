@@ -21,17 +21,41 @@ const GroupExperience = () => {
       <Header />
       <ScrollView>
         <View style={styles.topSection}>
-            <Text style={{fontFamily: bauhaus.bold, color: 'white', fontSize: 16}}>Group Experience</Text>
-            <Text style={{fontFamily: futura.semi, color: 'white',marginTop: 3.5, }}>Explore cafe’s with group experience; enjoy and share the vinyl experience</Text>
+          <Text
+            style={{ fontFamily: bauhaus.bold, color: 'white', fontSize: 16 }}
+          >
+            Group Experience
+          </Text>
+          <Text
+            style={{ fontFamily: futura.semi, color: 'white', marginTop: 3.5 }}
+          >
+            Explore cafe’s with group experience; enjoy and share the vinyl
+            experience
+          </Text>
           <Image
             source={require('../../../assets/images/group-experience-banner.png')} // Replace with your splash image path
             style={styles.bannerImage}
           />
         </View>
         <View style={{}}>
-          <CafeCard />
-          <CafeCard />
-          <CafeCard />
+          <CafeCard
+            cafeName="The Cozy Corner"
+            cafeAddress="42nd Main, Sector 2, 12th Cross Road Whitefield"
+            cafeImage={require('../../../assets/images/cafe-image-rec.png')}
+            isFavorite={true}
+          />
+          <CafeCard
+            cafeName="The Cozy Corner"
+            cafeAddress="42nd Main, Sector 2, 12th Cross Road Whitefield"
+            cafeImage={require('../../../assets/images/cafe-image-rec.png')}
+            isFavorite={true}
+          />
+          <CafeCard
+            cafeName="The Cozy Corner"
+            cafeAddress="42nd Main, Sector 2, 12th Cross Road Whitefield"
+            cafeImage={require('../../../assets/images/cafe-image-rec.png')}
+            isFavorite={true}
+          />
         </View>
       </ScrollView>
     </LinearGradient>

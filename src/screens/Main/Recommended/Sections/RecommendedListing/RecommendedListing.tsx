@@ -31,9 +31,25 @@ const RecommendedListing = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.cafeCardsOutline}>
-        <CafeCard />
-        <CafeCard />
-        <CafeCard />
+        <CafeCard
+            cafeName="The Cozy Corner"
+            cafeAddress="42nd Main, Sector 2, 12th Cross Road Whitefield"
+            cafeImage={require('../../../../../assets/images/cafe-image-rec.png')}
+            isFavorite={true}
+          />
+        <CafeCard
+            cafeName="The Cozy Corner"
+            cafeAddress="42nd Main, Sector 2, 12th Cross Road Whitefield"
+            cafeImage={require('../../../../../assets/images/cafe-image-rec.png')}
+            isFavorite={true}
+          />
+        <CafeCard
+            cafeName="The Cozy Corner"
+            cafeAddress="42nd Main, Sector 2, 12th Cross Road Whitefield"
+            cafeImage={require('../../../../../assets/images/cafe-image-rec.png')}
+            isFavorite={true}
+          />
+         
       </View>
     </View>
   );

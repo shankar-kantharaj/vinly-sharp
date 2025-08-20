@@ -80,7 +80,7 @@ const WelcomToVinyl = () => {
                 routes: [
                   {
                     name: 'BottomTabBar' as never,
-                    params: { screen: 'GroupExp' },
+                    params: { screen: 'Home' },
                   },
                 ],
               });

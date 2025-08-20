@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TouchableOpacity } from "react-native";
+import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TouchableOpacity, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { GroupExperienceStack, HomeStack } from "../../navigations/routes";
 import HomeScreen from "../../screens/Main/HomeScreen/HomeScreen";
@@ -9,23 +9,24 @@ const Tab = createBottomTabNavigator();
 
 interface TabIconProps {
   focused: boolean; // Whether the tab is focused or not
-  imageSource: ImageSourcePropType; // The source of the image (could be a URI or a local image)
-  onPress: (event: GestureResponderEvent) => void; // Function that is called when the tab is pressed
+  activeImageSource: ImageSourcePropType; // The source of the image (could be a URI or a local image)
+  inActiveImageSource: ImageSourcePropType; // The source of the image (could be a URI or a local image)
+  
 }
 
 // Reusable TabIcon Component
-const TabIcon: React.FC<TabIconProps> = ({ focused, imageSource, onPress }) => ( 
-  <TouchableOpacity onPress={onPress} style={styles.tabButton}>
+const TabIcon: React.FC<TabIconProps> = ({ focused, activeImageSource,inActiveImageSource }) => ( 
+  <View style={styles.tabButton}>
     <LinearGradient
-     colors={focused ? ['transparent','#ab464f'] : ['transparent', 'transparent']} // Gradient for active tab
+     colors={focused ? ['transparent','transparent'] : ['transparent', 'transparent']} // Gradient for active tab
       style={styles.iconContainer}
     >
       <Image
-        source={imageSource}
+        source={ focused ? activeImageSource : inActiveImageSource}
         style={[styles.tabIcon, focused && styles.activeIcon]} // Apply active icon style
       />
     </LinearGradient>
-  </TouchableOpacity>
+  </View>
 );
 
 const BottomTabNavigator = () => {
@@ -51,8 +52,9 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <TabIcon
               focused={focused}
-              imageSource={require('../../assets/images/bar-home.png')}
-              onPress={() => navigation.navigate('Home')} // Ensures the navigation works when tab is pressed
+              activeImageSource={require('../../assets/images/bottom-bar/bar-home-active.png')}
+              inActiveImageSource={require('../../assets/images/bottom-bar/bar-home-inactive.png')}
+            
             />
           ),
         })}
@@ -66,8 +68,8 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <TabIcon
               focused={focused}
-              imageSource={require('../../assets/images/bar-explore.png')}
-              onPress={() => {}}
+              activeImageSource={require('../../assets/images/bottom-bar/bar-explore-active.png')}
+              inActiveImageSource={require('../../assets/images/bottom-bar/bar-explore-inactive.png')}
             />
           ),
         })}
@@ -81,8 +83,9 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <TabIcon
               focused={focused}
-              imageSource={require('../../assets/images/bar-flagship.png')}
-              onPress={() => navigation.navigate('Flagship')}
+              activeImageSource={require('../../assets/images/bottom-bar/bar-flagship-active.png')}
+              inActiveImageSource={require('../../assets/images/bottom-bar/bar-flagship-inactive.png')}
+            
             />
           ),
         })}
@@ -96,8 +99,9 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <TabIcon
               focused={focused}
-              imageSource={require('../../assets/images/bar-group.png')}
-              onPress={() => {}}
+              activeImageSource={require('../../assets/images/bottom-bar/bar-group-active.png')}
+              inActiveImageSource={require('../../assets/images/bottom-bar/bar-group-inactive.png')}
+            
             />
           ),
         })}
@@ -111,8 +115,9 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <TabIcon
               focused={focused}
-              imageSource={require('../../assets/images/bar-star.png')}
-              onPress={() => navigation.navigate('WishList')}
+              activeImageSource={require('../../assets/images/bottom-bar/bar-star-active.png')}
+              inActiveImageSource={require('../../assets/images/bottom-bar/bar-star-inactive.png')}
+             
             />
           ),
         })}
@@ -128,11 +133,11 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     borderRadius: 15,
-    padding: 10,
+    padding: 0,
   },
   tabIcon: {
-    width: 30,
-    height: 30,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
   },
   activeIcon: {
