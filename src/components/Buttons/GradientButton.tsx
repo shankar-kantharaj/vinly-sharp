@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
+import { bauhaus, futura } from '../../constants/fonts_exports';
 
 
 interface ButtonProps{
@@ -14,9 +15,9 @@ const GradientButton = (props:ButtonProps) => {
       // colors={['#DE5461', '#581415']}
       start={{ x: 0, y: 0 }} // Starting point (left)
       end={{ x: 1, y: 0 }}
-      style={{ borderRadius: 6, borderColor: '#707070', borderWidth: 1.5, paddingHorizontal: 20, paddingVertical: 4}}
+      style={{ borderRadius: 6, borderColor: '#707070', borderWidth: 1.5, }}
     >
-      <Text style={{color: 'white',fontFamily: 'Bh-Bold', fontSize: 13}}>{text}</Text>
+      <Text style={{color: 'white',fontFamily: bauhaus.bold, fontSize: 13,paddingHorizontal: 20, paddingVertical: 5}}>{text}</Text>
     </LinearGradient>
   );
 };

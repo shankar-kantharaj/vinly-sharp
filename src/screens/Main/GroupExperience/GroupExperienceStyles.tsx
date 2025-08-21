@@ -7,7 +7,6 @@ const height = Dimensions.get('window').height;
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: isAndroid ? 20 : 0,
   },
   innerContainer: {
     flex: 1,

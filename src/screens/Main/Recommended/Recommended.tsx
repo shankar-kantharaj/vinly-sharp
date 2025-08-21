@@ -1,24 +1,26 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { backgroundGradientColors } from '../../../constants/colors'; 
 import { styles } from './RecommendedStyles';
 import Header from '../../../components/Header/Header';
 import ExploreCafeSpaces from '../HomeScreen/Sections/ExploreCafeSpaces/ExploreCafeSpaces';
 import RecommendedListing from './Sections/RecommendedListing/RecommendedListing';
+import { appColors } from '../../../constants/colors';
 const RecommendedScreen = () => {
   return (
     <LinearGradient
       // colors={}
       start={{ x: 0, y: 0 }} // Starting point (left)
       end={{ x: 0.7, y: 0.2 }}
-      colors={backgroundGradientColors}
+      colors={appColors.backgroundGradientColors}
       style={styles.container}
     >
-      <Header />
-      <ScrollView>  
-        <RecommendedListing />
-      </ScrollView>
+      <SafeAreaView style={{margin: 20,}}>
+        <Header />
+        <ScrollView>
+          <RecommendedListing />
+        </ScrollView>
+      </SafeAreaView>
     </LinearGradient>
   );
 };

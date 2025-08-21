@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Image, StyleSheet, GestureResponderEvent, Text } from 'react-native';
 import { futura } from '../../constants/fonts_exports';
+import { appColors } from '../../constants/colors';
 
 // Define types for the props
 interface CustomButtonProps {
@@ -17,7 +18,7 @@ interface CustomButtonProps {
 const CustomButton: React.FC<CustomButtonProps> = ({
   text,
   onPress,
-  backgroundColor = '#6200EE', // Default background color
+  backgroundColor = appColors.primaryButton, // Default background color
   textColor = '#fff', // Default text color
   width = '100%', // Default width
   height = 50, // Default height
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontFamily: futura.bold
+    fontFamily: futura.medium
   },
   icon: {
     width: 20,

@@ -1,19 +1,38 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Dimensions,
+  GestureResponderEvent,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, { useRef, useState } from 'react';
 import GradientButton from '../Buttons/GradientButton';
 import { styles } from './HeaderStyles';
 import SearchModal from '../SearchModal/SearchModal';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import FilterCafeBottomSheet from '../FilterCafeBottomSheet/FilterCafeBottomSheet';
+import LocationModal from '../LocationModal/LocationModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 const Header = () => {
-  const height = Dimensions.get('window').height;
   const refRBSheet = useRef(null);
+  const height = Dimensions.get('window').height;
+  const userDetails = useSelector((state:RootState) => state.userDetails); // Access user state
+  const dispatch = useDispatch();
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showLocationModal, setshowLocationModal] = useState(false);
   return (
     <View style={{ paddingVertical: 15 }}>
       <View style={styles.addressBarOutline}>
-        <View style={styles.rowBetweenStart}>
+        <TouchableOpacity
+          onPress={() => {
+            setshowLocationModal(true);
+          }}
+          style={styles.rowBetweenStart}
+        >
           <Image
             source={require('../../assets/images/location.png')}
             style={styles.locationIcon}
@@ -22,11 +41,11 @@ const Header = () => {
             <Text style={styles.locationName}> Palm Medows</Text>
             <Text style={styles.locationAddress}> Whitefield, Bengaluru</Text>
           </View>
-        </View>
+        </TouchableOpacity>
         <View style={styles.rowBetweenCenter}>
           {/* <GradientButton text="Monthly" /> */}
-          <GradientButton text="Guest user" />
-          <View style={styles.trailIcon}>
+          <GradientButton text={userDetails.userType} />
+          {userDetails.userType !== 'Guest User' && <View style={styles.trailIcon}>
             <Text
               style={{
                 color: 'white',
@@ -37,7 +56,7 @@ const Header = () => {
             >
               VS
             </Text>
-          </View>
+          </View>}
         </View>
       </View>
       <View style={[styles.rowBetweenCenter, { marginTop: 13 }]}>
@@ -56,7 +75,7 @@ const Header = () => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            refRBSheet.current.open();
+            refRBSheet.current?.open();
           }}
         >
           <Image
@@ -71,12 +90,23 @@ const Header = () => {
         onClose={() => {
           setShowSearchModal(false);
         }}
-      /> 
+      />
+      <LocationModal
+        visible={showLocationModal}
+        onClose={() => {
+          setshowLocationModal(false);
+        }}
+      />
+
       <RBSheet
-        ref={refRBSheet} 
-        height={height * 0.65}
+        ref={refRBSheet}
+        height={height * 0.7}
         customStyles={{
-          container:{backgroundColor: '#211f20', borderTopRightRadius: 20, borderTopLeftRadius: 20},
+          container: {
+            backgroundColor: '#211f20',
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
+          },
           wrapper: {
             backgroundColor: 'transparent',
           },
@@ -92,7 +122,11 @@ const Header = () => {
           enabled: false,
         }}
       >
-       <FilterCafeBottomSheet />
+        <FilterCafeBottomSheet
+          onClose={() => {
+            refRBSheet.current?.close();
+          }}
+        />
       </RBSheet>
     </View>
   );
