@@ -1,35 +1,51 @@
 import {
-  Dimensions,
-  GestureResponderEvent,
-  Image,
-  StyleSheet,
+  Dimensions, 
+  Image, 
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GradientButton from '../Buttons/GradientButton';
 import { styles } from './HeaderStyles';
 import SearchModal from '../SearchModal/SearchModal';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import FilterCafeBottomSheet from '../FilterCafeBottomSheet/FilterCafeBottomSheet';
-import LocationModal from '../LocationModal/LocationModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { useNavigation } from '@react-navigation/native';
+import { getAvailableFilters } from '../../api/auth/main/filterApi';
+import { setFilterDataByUser } from '../../redux/reducers/filterReducer';
 
 const Header = () => {
-  const refRBSheet = useRef(null);
-  const height = Dimensions.get('window').height;
-  const userDetails = useSelector((state:RootState) => state.userDetails); // Access user state
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const refRBSheet = useRef<any>(null);
+  const height = Dimensions.get('window').height;
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showLocationModal, setshowLocationModal] = useState(false);
+  const userDetails = useSelector((state:RootState) => state.userDetails); // Access user state
+  const {filterDataFromApi} = useSelector((state:RootState) => state.filter); // Access filter state
+
+  useEffect(() => {
+    const apiCallToGetAvailableFilters = async () => {
+      await getAvailableFilters(dispatch);
+    }
+    apiCallToGetAvailableFilters();
+    return () => {
+      
+    }
+  }, [])
+
+
+  
   return (
     <View style={{ paddingVertical: 15 }}>
       <View style={styles.addressBarOutline}>
         <TouchableOpacity
           onPress={() => {
-            setshowLocationModal(true);
+            // @ts-ignore
+            navigation.navigate('SearchStack' as never, { screen: 'SearchLocation' } as never);
           }}
           style={styles.rowBetweenStart}
         >
@@ -91,13 +107,7 @@ const Header = () => {
           setShowSearchModal(false);
         }}
       />
-      <LocationModal
-        visible={showLocationModal}
-        onClose={() => {
-          setshowLocationModal(false);
-        }}
-      />
-
+       
       <RBSheet
         ref={refRBSheet}
         height={height * 0.7}
@@ -123,6 +133,12 @@ const Header = () => {
         }}
       >
         <FilterCafeBottomSheet
+          onApplyFilters={(filters: any) => {
+            console.log('Applied Filters:', filters);
+            // Dispatch an action or update state with the applied filters
+             dispatch(setFilterDataByUser(filters));
+          }}
+          filterData={filterDataFromApi}
           onClose={() => {
             refRBSheet.current?.close();
           }}

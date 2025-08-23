@@ -5,6 +5,8 @@ import { styles } from './WelcomeToVinylStyles';
 import CustomButton from '../../../components/Buttons/CustomButtons';
 import LinearGradient from 'react-native-linear-gradient';
 import { appColors } from '../../../constants/colors';
+import axios from 'axios';
+import { baseUrl } from '../../../constants/variables';
 
 const WelcomToVinyl = () => {
   const navigation = useNavigation();
@@ -61,7 +63,9 @@ const WelcomToVinyl = () => {
             width={`${styles.customButtonWidth.width}`}
             text="Login"
             textColor="#ECEBDB"
-            onPress={() => {}}
+            onPress={() => {
+              console.log('hiii')
+            }}
             backgroundColor={appColors.primaryButton}
           />
           <CustomButton

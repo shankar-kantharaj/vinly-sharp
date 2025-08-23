@@ -15,42 +15,30 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import CafeCard from '../CafeCard/CafeCard';
 import { isAndroid } from '../../constants/variables';
 import { futura } from '../../constants/fonts_exports';
+import { getCafeListBySearch } from '../../api/auth/main/cafesApi';
+import { RootState } from '../../redux/store';
 
-type Props = { visible: boolean; onClose: () => void };
+type Props = { 
+  visible: boolean; 
+  onClose: () => void;
+};
 
-const dummyCafeData = [
-  {
-    cafeName: 'The Cozy Corner',
-    cafeAddress: '42nd Main, Sector 2, 12th Cross Road Whitefield',
-    cafeImage: require('../../assets/images/cafe-image-rec.png'),
-    isFavorite: true,
-  },
-  {
-    cafeName: 'Brew & Chew',
-    cafeAddress: '42nd Main, Sector 3, 14th Cross Road Whitefield',
-    cafeImage: require('../../assets/images/cafe-image-rec.png'),
-    isFavorite: false,
-  },
-  {
-    cafeName: 'Vinyl Cafe',
-    cafeAddress: '42nd Main, Sector 4, 10th Cross Road Whitefield',
-    cafeImage: require('../../assets/images/cafe-image-rec.png'),
-    isFavorite: true,
-  },
-  {
-    cafeName: 'Brew Bloom',
-    cafeAddress: '42nd Main, Sector 1, 5th Cross Road Whitefield',
-    cafeImage: require('../../assets/images/cafe-image-rec.png'),
-    isFavorite: false,
-  },
-];
-const searchedItems = ['New Cafe', 'Brew & Chew', 'Vinyl', 'The cozy corner'];
 export default function SearchModal({ visible, onClose }: Props) {
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredCafes, setFilteredCafes] = useState(dummyCafeData); // Initially, show all cafes
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [hasSearched, setHasSearched] = useState(false); // Track if user has performed a search
+  
+  // Get data from Redux store
+  const { cafeList, cafeListBySearch } = useSelector((state: RootState) => state.cafes);
+  const { userLocation } = useSelector((state: RootState) => state.userDetails);
+
+  // Determine base data source
+  const baseData = hasSearched ? cafeListBySearch : cafeList;
 
   // Handle back button press for closing modal
   useEffect(() => {
@@ -64,15 +52,67 @@ export default function SearchModal({ visible, onClose }: Props) {
     return () => sub.remove();
   }, [visible, onClose]);
 
-  // Update the filtered cafes based on search query
+  // Handle search submission (API call)
+  const handleSearchSubmit = async () => {
+    // Only make API call if there's text in the search box
+    if (searchQuery.trim().length > 0) {
+      try {
+        await getCafeListBySearch(searchQuery.trim(), userLocation, dispatch);
+        setHasSearched(true);
+      } catch (error) {
+        console.error('Search failed:', error);
+      }
+    }
+  };
+
+  // Filter data based on search query (local filtering)
   useEffect(() => {
-    const result = dummyCafeData.filter(
-      cafe =>
-        cafe.cafeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cafe.cafeAddress.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
-    setFilteredCafes(result);
-  }, [searchQuery]);
+    if (searchQuery.trim().length === 0) {
+      // If search is empty, show all data from base source
+      setFilteredData(baseData);
+    } else {
+      // Filter the base data locally based on search query
+      const filtered = baseData.filter((cafe: any) =>
+        cafe?.cafe_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        cafe?.address?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredData(filtered);
+    }
+  }, [searchQuery, baseData, hasSearched]);
+
+  // Clear search and close modal
+  const handleClearAndClose = () => {
+    setSearchQuery('');
+    setHasSearched(false);
+    setFilteredData([]);
+    onClose();
+  };
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!visible) {
+      setSearchQuery('');
+      setHasSearched(false);
+      setFilteredData([]);
+    }
+  }, [visible]);
+
+  // Initialize filtered data when modal opens
+  useEffect(() => {
+    if (visible && !hasSearched) {
+      setFilteredData(cafeList);
+    }
+  }, [visible, cafeList]);
+
+  // Handle search input change
+  const handleSearchInputChange = (text: string) => {
+    setSearchQuery(text);
+    
+    // If user clears the search after having searched, reset to original cafeList
+    if (text.trim().length === 0 && hasSearched) {
+      setHasSearched(false);
+    }
+  };
 
   return (
     <Modal
@@ -94,10 +134,7 @@ export default function SearchModal({ visible, onClose }: Props) {
         <SafeAreaView style={styles.topArea}>
           <View style={styles.topBar}>
             <View style={styles.searchBarOutline}>
-              <TouchableOpacity onPress={()=>{
-                setSearchQuery('')
-                onClose()
-              }}>
+              <TouchableOpacity onPress={handleClearAndClose}>
                 <Image
                   source={require('../../assets/images/leftArrow.png')}
                   style={styles.leftArrowIcon}
@@ -109,74 +146,46 @@ export default function SearchModal({ visible, onClose }: Props) {
                 placeholderTextColor={'#7A7778'}
                 placeholder="Cafe, mood, location.."
                 value={searchQuery}
-                onChangeText={setSearchQuery}
+                returnKeyType='search'
+                onSubmitEditing={handleSearchSubmit}
+                onChangeText={handleSearchInputChange}
               />
             </View>
           </View>
         </SafeAreaView>
 
-        <ScrollView>
-          {/* Your results/content area */}
-         {searchQuery.length > 0 ?
-          <View />
-          : <View style={styles.recentSearchOutline}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Text style={styles.recentSearchText}>Recent searches</Text>
-              <View style={styles.clearAllOutline}>
-                <Text style={styles.clearAllText}>Clear all</Text>
-              </View>
-            </View>
-            <View style={styles.searchItems}>
-              {searchedItems.map((item, index) => {
-                return (
-                  <View style={styles.searchedTextOutline} key={index}>
-                    <Image
-                      source={require('../../assets/images/search.png')}
-                      style={styles.searchIcon}
-                    />
-                    <Text style={styles.searchedText}> {item}... </Text>
-                  </View>
-                );
-              })}
-            </View>
-          </View>}
-
+        <ScrollView showsVerticalScrollIndicator={false}>
           {/* Results section */}
-          {searchQuery.length > 0 ? (
-            <View style={[styles.searchResultsOutline]}>
-              <Text style={styles.searchResultHeading}>Search results</Text>
-              <View style={styles.filteredItemsOutline}>
-                {filteredCafes.length === 0 ? (
-                  <View style={{width: '100%',}}>
-                    <Text style={styles.noCafeText}>No cafes found.</Text>
-                  </View>
-                ) : (
-                  filteredCafes.map((cafe, index) => (
-                    <CafeCard
-                      key={index}
-                      cafeName={cafe.cafeName}
-                      cafeAddress={cafe.cafeAddress}
-                      cafeImage={cafe.cafeImage}
-                      isFavorite={cafe.isFavorite}
-                    />
-                  ))
-                )}
-              </View>
+          <View style={styles.searchResultsOutline}>
+            <Text style={styles.searchResultHeading}>
+              {hasSearched ? 'Search results' : 'Recommendations'}
+            </Text>
+            <View style={styles.filteredItemsOutline}>
+              {filteredData.length === 0 ? (
+                <View style={{ width: '100%' }}>
+                  <Text style={styles.noCafeText}>
+                    {hasSearched ? 'No cafes found for your search.' : 'No cafes available.'}
+                  </Text>
+                </View>
+              ) : (
+                filteredData.map((cafe: any, index: number) => (
+                  <CafeCard
+                    key={index}
+                    cafeName={cafe?.cafe_name}
+                    cafeAddress={cafe?.address}
+                    cafeImage={require('../../assets/images/cafe-image-rec.png')}
+                    isFavorite={cafe?.isFavorite || false}
+                  />
+                ))
+              )}
             </View>
-          ) : (
-            <View></View>
-          )}
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
   );
 }
+
 const styles = StyleSheet.create({
   fill: {
     flex: 1,
@@ -191,15 +200,6 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   topBar: {},
-  recentSearchOutline: {
-    alignSelf: 'center',
-    marginTop: 15,
-    backgroundColor: '#221F20CC',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    width: '93%',
-    paddingVertical: 10,
-  },
   searchResultsOutline: {
     alignSelf: 'center',
     marginTop: 15,
@@ -225,65 +225,16 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   searchInput: {
+    flex: 1,
     marginLeft: 8,
     fontFamily: futura.medium,
     marginTop: 5,
     color: 'white',
     fontSize: 15,
   },
-  recentSearchText: {
-    color: '#e4dad7b5',
-    fontFamily: futura.medium,
-    fontSize: 17,
-  },
-  clearAllOutline: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    // borderRadius: 3,
-    // borderColor: '#55504b',
-    // borderWidth: 1,
-  },
-  clearAllText: {
-    color: 'red',
-    paddingVertical: 2,
-    paddingHorizontal: 10,
-    fontFamily: futura.medium,
-  },
-  closeIcon: {
-    height: 15,
-    width: 15,
-    resizeMode: 'cover',
-  },
-  searchIcon: {
-    height: 13,
-    width: 13,
-    resizeMode: 'cover',
-  },
-  searchItems: {
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    marginTop: 10,
-  },
   filteredItemsOutline: {
     flexWrap: 'wrap',
     flexDirection: 'row',
-  },
-
-  searchedTextOutline: {
-    borderRadius: 3,
-    borderColor: '#55504b',
-    borderWidth: 1,
-    marginRight: 10,
-    marginTop: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 5,
-  },
-  searchedText: {
-    color: 'lightgray',
-    fontFamily: futura.medium,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
   },
   searchResultHeading: {
     color: '#e4dad7b5',

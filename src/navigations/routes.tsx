@@ -4,6 +4,7 @@ import RecommendedScreen from '../screens/Main/Recommended/Recommended';
 import SplashScreen from '../screens/Auth/SplashScreen/SplashScreen';
 import WelcomeToVinyl from '../screens/Auth/WelcomeToVinyl/WelcomeToVinyl';
 import GroupExperience from '../screens/Main/GroupExperience/GroupExperience';
+import SearchLocation from '../components/SearchLocation/SearchLocation';
 
 // Auth Stack Navigator
 const StackNavigator1 = createNativeStackNavigator();
@@ -45,11 +46,7 @@ export const GroupExperienceStack = () => (
   <StackNavigator3.Navigator
     initialRouteName="GroupExperience"
     screenOptions={{
-      
     }}
-    // screenOptions={({ route }) => ({
-    //   tabBarVisible: route.name !== 'GroupExperience', // Hide the tab bar if on GroupExperience screen
-    // })}
   >
     <StackNavigator3.Screen
       name="GroupExperience"
@@ -57,4 +54,20 @@ export const GroupExperienceStack = () => (
       options={{ headerShown: false }}
     />
   </StackNavigator3.Navigator>
+);
+
+// Group Experience Stack Navigator
+const StackNavigator4 = createNativeStackNavigator();
+export const SearchStack = () => (
+  <StackNavigator4.Navigator
+    initialRouteName="SearchLocation"
+    screenOptions={{
+    }}
+  >
+    <StackNavigator4.Screen
+      name="SearchLocation"
+      component={SearchLocation}
+      options={{ headerShown: false }}
+    />
+  </StackNavigator4.Navigator>
 );

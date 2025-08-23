@@ -40,6 +40,18 @@
     {
       "path": "src/assets/fonts/Futura-Medium.ttf",
       "sha1": "b69396104293cc9419fc4ab87a6ee64c9faaf9fa"
+    },
+    {
+      "path": "src/assets/fonts/Typo-Light.otf",
+      "sha1": "bdaa3bfc84095c5028ac8a3e9e7a3584e83ebcc3"
+    },
+    {
+      "path": "src/assets/fonts/Typo-Regular.otf",
+      "sha1": "6c324031112ff1fe57fd4b14ee5e0738a20614e2"
+    },
+    {
+      "path": "src/assets/fonts/Typo-bold.otf",
+      "sha1": "b6557687c80c2315f277f64c5d1345dcf6a0efdc"
     }
   ]
 }

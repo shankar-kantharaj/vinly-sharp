@@ -48,5 +48,12 @@ export const styles = StyleSheet.create({
   },
   cafeCardsOutline:{
     marginTop: 7
+  },
+  noCafeText:{
+    fontFamily: futura.bold,
+    color: 'white',
+    fontSize: 15,
+    textAlign: 'center',
+    marginTop: 20
   }
 });

@@ -19,7 +19,7 @@ const CafeCard: React.FC<CafeCardProps> = ({ cafeName, cafeAddress, cafeImage, i
       <View style={styles.rowBetweenCenter}>
         <View>
           <Text style={styles.cafeName}>{cafeName}</Text>
-          <Text style={styles.cafeAddress}>{cafeAddress}</Text>
+          <Text style={styles.cafeAddress} numberOfLines={2} ellipsizeMode='tail'>{cafeAddress}</Text>
         </View>
 
         {/* Heart icon indicating whether the cafe is a favorite */}
@@ -32,7 +32,7 @@ const CafeCard: React.FC<CafeCardProps> = ({ cafeName, cafeAddress, cafeImage, i
       {/* Cafe image section */}
       <View style={[styles.ImageOutline, { height: 170, width: '100%', alignItems: 'center', marginTop: 12 }]}>
         <Image
-          source={cafeImage}
+          source={require('../../assets/images/cafe-image-rec.png')}
           style={{
             height: '100%',
             width: '100%',
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   cafeAddress: {
+    width: 250,
     color: '#EBD5D19E',
     fontFamily: futura.medium,
     fontSize: 12.5,

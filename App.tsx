@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AuthStack } from './src/navigations/routes';
+import { AuthStack, SearchStack } from './src/navigations/routes';
 import BottomTabNavigator from './src/components/BottomTabBar/BottomTabBar';
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
@@ -24,6 +24,9 @@ const App = () => (
 
         {/* Home Stack and Bottom Tab Navigation */}
         <Stack.Screen name="BottomTabBar" component={BottomTabNavigator} />
+        
+        <Stack.Screen name="SearchStack" component={SearchStack} />
+
       </Stack.Navigator>
     </NavigationContainer>
   </Provider>
