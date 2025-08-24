@@ -4,7 +4,8 @@ import RecommendedScreen from '../screens/Main/Recommended/Recommended';
 import SplashScreen from '../screens/Auth/SplashScreen/SplashScreen';
 import WelcomeToVinyl from '../screens/Auth/WelcomeToVinyl/WelcomeToVinyl';
 import GroupExperience from '../screens/Main/GroupExperience/GroupExperience';
-import SearchLocation from '../components/SearchLocation/SearchLocation';
+import SearchLocation from '../components/SearchSections/SearchLocation';
+import SearchCafe from '../components/SearchSections/SearchCafe';
 
 // Auth Stack Navigator
 const StackNavigator1 = createNativeStackNavigator();
@@ -67,6 +68,11 @@ export const SearchStack = () => (
     <StackNavigator4.Screen
       name="SearchLocation"
       component={SearchLocation}
+      options={{ headerShown: false }}
+    />
+    <StackNavigator4.Screen
+      name="SearchCafe"
+      component={SearchCafe}
       options={{ headerShown: false }}
     />
   </StackNavigator4.Navigator>

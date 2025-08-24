@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   outline: {
-    marginTop: 20,
+    marginVertical: 20, 
   },
   grid: {
     padding: 10,

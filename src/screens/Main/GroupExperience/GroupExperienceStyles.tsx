@@ -1,5 +1,6 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native' 
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { isAndroid } from '../../../constants/variables';
+import { futura } from '../../../constants/fonts_exports';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -22,12 +23,26 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
-    bannerImage: {
+  bannerImage: {
     width: '100%',
     height: 116,
     resizeMode: 'contain', // Ensures the image covers the entire screen without distortion
-  },
-  topSection: { 
-   
+  }, 
+  // noCafeText: {
+  //   fontFamily: futura.bold,
+  //   color: 'white',
+  //   fontSize: 15,
+  //   textAlign: 'center',
+  //   marginTop: 20,
+  // }, 
+ 
+ 
+ 
+  noCafeText: {
+    color: 'white',
+    fontFamily: futura.medium,
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
   },
 });

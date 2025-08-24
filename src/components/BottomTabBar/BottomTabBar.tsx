@@ -1,28 +1,41 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TouchableOpacity, View } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
-import { GroupExperienceStack, HomeStack } from "../../navigations/routes";
-import HomeScreen from "../../screens/Main/HomeScreen/HomeScreen";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  GestureResponderEvent,
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { GroupExperienceStack, HomeStack } from '../../navigations/routes';
+import HomeScreen from '../../screens/Main/HomeScreen/HomeScreen';
 
 const Tab = createBottomTabNavigator();
-
 
 interface TabIconProps {
   focused: boolean; // Whether the tab is focused or not
   activeImageSource: ImageSourcePropType; // The source of the image (could be a URI or a local image)
   inActiveImageSource: ImageSourcePropType; // The source of the image (could be a URI or a local image)
-  
 }
 
 // Reusable TabIcon Component
-const TabIcon: React.FC<TabIconProps> = ({ focused, activeImageSource,inActiveImageSource }) => ( 
+const TabIcon: React.FC<TabIconProps> = ({
+  focused,
+  activeImageSource,
+  inActiveImageSource,
+}) => (
   <View style={styles.tabButton}>
     <LinearGradient
-     colors={focused ? ['transparent','transparent'] : ['transparent', 'transparent']} // Gradient for active tab
+      colors={
+        focused
+          ? ['transparent', 'transparent']
+          : ['transparent', 'transparent']
+      } // Gradient for active tab
       style={styles.iconContainer}
     >
       <Image
-        source={ focused ? activeImageSource : inActiveImageSource}
+        source={focused ? activeImageSource : inActiveImageSource}
         style={[styles.tabIcon, focused && styles.activeIcon]} // Apply active icon style
       />
     </LinearGradient>
@@ -32,12 +45,12 @@ const TabIcon: React.FC<TabIconProps> = ({ focused, activeImageSource,inActiveIm
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName='Home'
+      initialRouteName="Home"
       screenOptions={{
         tabBarStyle: {
           backgroundColor: '#201c1c',
           borderTopWidth: 0,
-          borderBottomWidth: 0, 
+          borderBottomWidth: 0,
           height: 88,
           paddingTop: 15,
         },
@@ -54,7 +67,6 @@ const BottomTabNavigator = () => {
               focused={focused}
               activeImageSource={require('../../assets/images/bottom-bar/bar-home-active.png')}
               inActiveImageSource={require('../../assets/images/bottom-bar/bar-home-inactive.png')}
-            
             />
           ),
         })}
@@ -85,7 +97,6 @@ const BottomTabNavigator = () => {
               focused={focused}
               activeImageSource={require('../../assets/images/bottom-bar/bar-flagship-active.png')}
               inActiveImageSource={require('../../assets/images/bottom-bar/bar-flagship-inactive.png')}
-            
             />
           ),
         })}
@@ -101,7 +112,6 @@ const BottomTabNavigator = () => {
               focused={focused}
               activeImageSource={require('../../assets/images/bottom-bar/bar-group-active.png')}
               inActiveImageSource={require('../../assets/images/bottom-bar/bar-group-inactive.png')}
-            
             />
           ),
         })}
@@ -117,7 +127,6 @@ const BottomTabNavigator = () => {
               focused={focused}
               activeImageSource={require('../../assets/images/bottom-bar/bar-star-active.png')}
               inActiveImageSource={require('../../assets/images/bottom-bar/bar-star-inactive.png')}
-             
             />
           ),
         })}

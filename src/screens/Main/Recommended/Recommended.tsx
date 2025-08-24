@@ -3,7 +3,6 @@ import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { styles } from './RecommendedStyles';
 import Header from '../../../components/Header/Header';
-import ExploreCafeSpaces from '../HomeScreen/Sections/ExploreCafeSpaces/ExploreCafeSpaces';
 import RecommendedListing from './Sections/RecommendedListing/RecommendedListing';
 import { appColors } from '../../../constants/colors';
 const RecommendedScreen = () => {
@@ -15,11 +14,9 @@ const RecommendedScreen = () => {
       colors={appColors.backgroundGradientColors}
       style={styles.container}
     >
-      <SafeAreaView style={{margin: 20,}}>
+      <SafeAreaView style={{ margin: 20, flex: 1 }}>
         <Header />
-        <ScrollView>
-          <RecommendedListing />
-        </ScrollView>
+        <RecommendedListing />
       </SafeAreaView>
     </LinearGradient>
   );

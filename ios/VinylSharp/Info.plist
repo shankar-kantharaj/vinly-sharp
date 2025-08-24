@@ -47,9 +47,8 @@
 		<string>Futura-Light.ttf</string>
 		<string>Futura-Medium.ttf</string>
 		<string>Bh-Bold.otf</string>
-		<string>Typo-Light.otf</string>
-		<string>Typo-Regular.otf</string>
-		<string>Typo-bold.otf</string>
+		<string>Bauhaus-Bold.ttf</string>
+		<string>Bauhaus-Regular.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

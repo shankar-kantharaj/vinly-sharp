@@ -6,6 +6,7 @@ import {
   setCafeListByLocation,
   setCafeListBySearch,
   setCafeListBySelectedFilters,
+  setRecommendedCafesByLocationFilters,
   setRecommendedCafesByLocationFiltersAndSearches,
 } from '../../../redux/reducers/cafeReducer';
 import { FilterDataType } from './safety-types';
@@ -47,7 +48,7 @@ export const getCafeList = async (
         distance: '2',
       },
     ];
-    dispatch(setCafeList(data)); 
+    dispatch(setCafeList(data));
     // console.log(response.data);
   } catch (error) {
     console.log('Error getCafeList api : ', error);
@@ -195,6 +196,80 @@ export const getCafeListBySelectedFilters = async (
   }
 };
 
+export const getRecommendedCafesByLocationFilters = async (
+  requestBody: {
+    latitude: number;
+    longitude: number;
+    filter: FilterDataType;
+    limit: number;
+  },
+  dispatch: AppDispatch,
+) => {
+  try {
+    // const response = await axios.post(
+    //   `${baseUrl}/cafes/recommend`,
+    //   requestBody,
+    // );
+
+    const data = [
+      {
+        cafe_id: 'cafe-uuid-243',
+        cafe_name: 'Cafe Aroma',
+        address: 'Jayanagar 4th Block, Bangalore, Karnataka, 560011',
+        distance: 2.9,
+      },
+      {
+        cafe_id: 'cafe-uuid-244',
+        cafe_name: 'Roast Republic',
+        address: 'HSR Layout, Bangalore, Karnataka, 560102',
+        distance: 4.8,
+      },
+      {
+        cafe_id: 'cafe-uuid-245',
+        cafe_name: 'Bean Boulevard',
+        address: 'Banashankari, Bangalore, Karnataka, 560070',
+        distance: 3.2,
+      },
+      {
+        cafe_id: 'cafe-uuid-246',
+        cafe_name: 'Cafe Cosmo',
+        address: 'Ulsoor, Bangalore, Karnataka, 560008',
+        distance: 2.4,
+      },
+        {
+        cafe_id: 'cafe-uuid-247',
+        cafe_name: 'Brew Haven',
+        address: 'BTM Layout, Bangalore, Karnataka, 560029',
+        distance: 3.7,
+      },
+      {
+        cafe_id: 'cafe-uuid-248',
+        cafe_name: 'Perk Palace',
+        address: 'Vasanth Nagar, Bangalore, Karnataka, 560052',
+        distance: 1.9,
+      },
+      {
+        cafe_id: 'cafe-uuid-249',
+        cafe_name: 'Ground Up Cafe',
+        address: 'Domlur, Bangalore, Karnataka, 560071',
+        distance: 2.8,
+      },
+      {
+        cafe_id: 'cafe-uuid-250',
+        cafe_name: 'Sip & Sit',
+        address: 'Sarjapur Road, Bangalore, Karnataka, 560035',
+        distance: 5.0,
+      },
+    ];
+    dispatch(setRecommendedCafesByLocationFilters(data));
+    // console.log(response.data);
+  } catch (error) {
+    console.log('Error getRecommendedCafesByLocationFilters api : ', error);
+  } finally {
+    console.log('getRecommendedCafesByLocationFilters finished');
+  }
+};
+
 export const getRecommendedCafesByLocationFiltersSearches = async (
   requestBody: {
     latitude: number;
@@ -236,12 +311,16 @@ export const getRecommendedCafesByLocationFiltersSearches = async (
         address: 'Malleshwaram, Bangalore, Karnataka, 560003',
         distance: 3.6,
       },
+    
     ];
     dispatch(setRecommendedCafesByLocationFiltersAndSearches(data));
     // console.log(response.data);
   } catch (error) {
-    console.log('Error getCafeListBySearch api : ', error);
+    console.log(
+      'Error getRecommendedCafesByLocationFiltersSearches api : ',
+      error,
+    );
   } finally {
-    console.log('getCafeListBySearch finished');
+    console.log('getRecommendedCafesByLocationFiltersSearches finished');
   }
 };

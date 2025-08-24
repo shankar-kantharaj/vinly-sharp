@@ -1,3 +1,5 @@
+import { isAndroid } from "./variables"
+
 export const futura = {
     bold: 'Futura-Bold',
     medium: 'Futura-Medium',
@@ -6,7 +8,6 @@ export const futura = {
     book: 'Futura-Book'
 }
 export const bauhaus = {
-    bold: 'Bh-Bold',
-    regular: 'Bh-Regular',
-    italic: 'Bh-Italic', 
+    bold: isAndroid ? 'Bh-Bold' : 'Bauhaus-Bold',
+    regular: isAndroid ? 'Bh-Regular' : 'Bauhaus-Regular',
 }

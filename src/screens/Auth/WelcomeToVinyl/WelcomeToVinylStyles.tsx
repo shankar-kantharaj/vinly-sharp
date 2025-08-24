@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
   },
   welcomeHeading:{
     color: '#ECEBDB',
-    fontFamily: 'Typo-bold',
+    fontFamily: bauhaus.bold,
     fontSize: 20,
     textAlign: 'center',
     lineHeight: 26

@@ -33,7 +33,7 @@ interface Props {
   navigation: any; // You can use proper navigation type from @react-navigation/native
 }
 
-export default function SearchLocationScreen({ navigation }: Props) {
+export default function SearchLocation({ navigation }: Props) {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const { userLocation } = useSelector((state: RootState) => state.userDetails);

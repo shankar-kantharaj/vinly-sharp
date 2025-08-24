@@ -8,7 +8,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import GradientButton from '../Buttons/GradientButton';
 import { styles } from './HeaderStyles';
-import SearchModal from '../SearchModal/SearchModal';
+import SearchModal from '../SearchSections/SearchCafe';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import FilterCafeBottomSheet from '../FilterCafeBottomSheet/FilterCafeBottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,8 +22,6 @@ const Header = () => {
   const navigation = useNavigation();
   const refRBSheet = useRef<any>(null);
   const height = Dimensions.get('window').height;
-  const [showSearchModal, setShowSearchModal] = useState(false);
-  const [showLocationModal, setshowLocationModal] = useState(false);
   const userDetails = useSelector((state:RootState) => state.userDetails); // Access user state
   const {filterDataFromApi} = useSelector((state:RootState) => state.filter); // Access filter state
 
@@ -35,10 +33,7 @@ const Header = () => {
     return () => {
       
     }
-  }, [])
-
-
-  
+  }, []) 
   return (
     <View style={{ paddingVertical: 15 }}>
       <View style={styles.addressBarOutline}>
@@ -79,7 +74,8 @@ const Header = () => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            setShowSearchModal(!showSearchModal);
+            // @ts-ignore
+            navigation.navigate('SearchStack' as never, { screen: 'SearchCafe' } as never);
           }}
           style={styles.searchBarOutline}
         >
@@ -101,12 +97,6 @@ const Header = () => {
         </TouchableOpacity>
       </View>
 
-      <SearchModal
-        visible={showSearchModal}
-        onClose={() => {
-          setShowSearchModal(false);
-        }}
-      />
        
       <RBSheet
         ref={refRBSheet}

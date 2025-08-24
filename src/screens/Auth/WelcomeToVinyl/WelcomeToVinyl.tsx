@@ -60,7 +60,7 @@ const WelcomToVinyl = () => {
 
         <View>
           <CustomButton
-            width={`${styles.customButtonWidth.width}`}
+              width={styles.customButtonWidth.width}
             text="Login"
             textColor="#ECEBDB"
             onPress={() => {
@@ -69,14 +69,14 @@ const WelcomToVinyl = () => {
             backgroundColor={appColors.primaryButton}
           />
           <CustomButton
-            width={`${styles.customButtonWidth.width}`}
+              width={styles.customButtonWidth.width}
             text="Sign up"
             textColor="#561314"
             onPress={() => {}}
             backgroundColor="#C7BDAC"
           />
           <CustomButton
-            width={`${styles.customButtonWidth.width}`}
+            width={styles.customButtonWidth.width}
             text="Skip Login"
             textColor="#C7BDAC"
             onPress={() => {

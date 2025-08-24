@@ -13,6 +13,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   outline: {
+    flex: 1,
     marginTop: 10,
   },
   grid: {
@@ -46,6 +47,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 7,
   },
-  cafeCardsOutline:{ 
+  cafeCardsOutline: { 
   }
 });
