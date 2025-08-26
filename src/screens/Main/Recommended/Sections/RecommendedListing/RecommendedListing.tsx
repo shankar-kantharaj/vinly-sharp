@@ -47,7 +47,7 @@ const RecommendedListing = () => {
       <View style={styles.rowBetweenCenter}>
         <View>
           <Text style={styles.sectionTitile}>
-            Recommended for you{recommendedCafesByLocationFilters.length}{' '}
+            Recommended for you
           </Text>
         </View>
         <TouchableOpacity

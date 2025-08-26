@@ -27,22 +27,13 @@ const CafeCardWithLocation: React.FC<CafeCardProps> = ({
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       colors={['#141414', '#303030']}
-      style={{borderRadius: 10, marginTop: isAndroid ? 15 : 15}}
+      style={styles.overlay}
     >
       <View style={styles.cardOutline}>
-        <View
-          style={[
-            styles.ImageOutline, 
-          ]}
-        >
+        <View style={[styles.ImageOutline]}>
           <Image
-            source={require('../..//assets/images/cafe-image-rec.png')}
-            style={{
-              height: '100%',
-              width: '100%',
-              resizeMode: 'cover',
-              borderRadius: 8,
-            }}
+            source={require('../../assets/images/cafe-image-rec.png')}
+            style={styles.cafeImage}
           />
         </View>
 
@@ -50,18 +41,9 @@ const CafeCardWithLocation: React.FC<CafeCardProps> = ({
           <View>
             <Image
               source={require('../../assets/images/location-white.png')}
-              style={{ height: 18, width: 18, resizeMode: 'contain' }}
+              style={styles.locationIcon}
             />
-            <Text
-              style={{
-                color: 'white',
-                fontSize: 10,
-                fontFamily: futura.medium,
-                marginTop: 3,
-              }}
-            >
-              {distance} Km
-            </Text>
+            <Text style={styles.distanceText}>{distance} Km</Text>
           </View>
           <View style={{ paddingLeft: 8, width: '100%' }}>
             <Text style={styles.cafeName}>{cafeName}</Text>
@@ -72,9 +54,7 @@ const CafeCardWithLocation: React.FC<CafeCardProps> = ({
             >
               {cafeAddress}
             </Text>
-          </View>
-
-          {/* Heart icon indicating whether the cafe is a favorite */}
+          </View>  
         </View>
       </View>
     </LinearGradient>
@@ -90,6 +70,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingLeft: 3,
+  },
+  overlay: {
+    borderRadius: 10,
+    marginTop: 15,
   },
   cardOutline: {
     width: '100%',
@@ -108,11 +92,16 @@ const styles = StyleSheet.create({
     fontFamily: futura.medium,
     fontSize: 12.5,
   },
-  ImageOutline: { 
-    height: 170, 
-    width: '100%', 
-    alignItems: 'center',  
-   },
+  ImageOutline: {
+    height: 170,
+    width: '100%',
+    alignItems: 'center',
+  },
+  locationIcon: {
+    height: 18,
+    width: 18,
+    resizeMode: 'contain',
+  },
   flagshipOutline: {
     backgroundColor: '#561214',
     position: 'absolute',
@@ -126,5 +115,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 22,
     paddingVertical: 8,
+  },
+  cafeImage: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'cover',
+    borderRadius: 8,
+  },
+  distanceText: {
+    color: 'white',
+    fontSize: 10,
+    fontFamily: futura.medium,
+    marginTop: 3,
   },
 });

@@ -16,7 +16,7 @@ export interface CafeListByLocationType {
 }
 
 
-export interface FilterDataType {
+export interface FilterDataTypeFromApi {
   availability: string[];
   amenities: string[];
   music_genre: string[];
@@ -34,4 +34,19 @@ export interface FilterDataType {
 }
 
 
+export interface  FilterValuesForApiReqBody {
+  availability: string ;
+  amenities: string[];
+  music_genre: string[];
+  category: string;
+  location_id: string;
+  timings: {
+    day: string;
+    start_time: string;
+    end_time: string;
+  };
+  sortby: string;
+  latitude: number;
+  longitude: number;
+}
 

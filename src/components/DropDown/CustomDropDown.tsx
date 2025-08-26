@@ -26,18 +26,18 @@ const CustomDropdown: React.FC<DropdownProps> = ({
       <Text style={styles.label}>{label}</Text>
       <Dropdown
         data={data}
-        keyboardAvoiding
         value={value}
+        keyboardAvoiding
         labelField="label" 
         valueField="value" 
         onChange={onChange}
         style={styles.dropDown}
         placeholder={placeHolder}
-        activeColor='#ada493'
         containerStyle={styles.containerStyle}
         selectedTextStyle={styles.selectedText}  
         itemTextStyle={{ fontFamily: futura.book }}
         placeholderStyle={styles.dropDownPlaceHolder}
+        activeColor= {appColors.dropDownItemActiveColor}
         itemContainerStyle={styles.dropDownItemContainerStyle}
       />
     </View>
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     backgroundColor: appColors.dropDownColor,
     padding: 12,
     fontFamily: futura.medium,
-    borderRadius: 8, // Add border radius for better design
-    marginTop: 8, // Space between the label and dropdown
+    borderRadius: 8, 
+    marginTop: 8,  
   },
   dropDownPlaceHolder: {
     fontFamily: futura.book,

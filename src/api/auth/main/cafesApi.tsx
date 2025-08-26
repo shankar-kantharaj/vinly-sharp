@@ -9,7 +9,7 @@ import {
   setRecommendedCafesByLocationFilters,
   setRecommendedCafesByLocationFiltersAndSearches,
 } from '../../../redux/reducers/cafeReducer';
-import { FilterDataType } from './safety-types';
+import { FilterDataTypeFromApi, FilterValuesForApiReqBody } from './safety-types';
 import { Alert } from 'react-native';
 
 export const getCafeList = async (
@@ -147,7 +147,7 @@ export const getCafeListBySearch = async (
 };
 
 export const getCafeListBySelectedFilters = async (
-  filters: FilterDataType,
+  filters: FilterValuesForApiReqBody,
   dispatch: AppDispatch,
 ) => {
   try {
@@ -200,7 +200,7 @@ export const getRecommendedCafesByLocationFilters = async (
   requestBody: {
     latitude: number;
     longitude: number;
-    filter: FilterDataType;
+    filter: FilterValuesForApiReqBody;
     limit: number;
   },
   dispatch: AppDispatch,
@@ -275,7 +275,7 @@ export const getRecommendedCafesByLocationFiltersSearches = async (
     latitude: number;
     longitude: number;
     recent_searches: string[];
-    filter: FilterDataType;
+    filter: FilterValuesForApiReqBody;
     limit: number;
   },
   dispatch: AppDispatch,

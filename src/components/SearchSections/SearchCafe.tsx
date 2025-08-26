@@ -41,10 +41,35 @@ function SearchCafe({ navigation }: Props) {
     recommendedCafesByLocationFiltersAndSearches,
   } = useSelector((state: RootState) => state.cafes);
 
-  // Determine base data source
-  const baseData = hasSearched
-    ? cafeListBySearch
-    : recommendedCafesByLocationFiltersAndSearches;
+  // Check if filterDataByUser has data (not initial empty state)
+  const hasFilters = Object.keys(filterDataByUser).length > 0;
+
+  // Determine current data source based on state
+  const getCurrentDataSource = () => {
+    if (hasSearched) {
+      return cafeListBySearch;
+    } else if (hasFilters) {
+      return recommendedCafesByLocationFiltersAndSearches;
+    } else {
+      return cafeList;
+    }
+  };
+
+  // API call for recommended cafes when filters change
+  useEffect(() => {
+    const apiCallToGetCafesByLocationFiltersSearches = async () => {
+      if (hasFilters) {
+        const requestBody = {
+          ...userLocation,
+          filter: filterDataByUser,
+          recent_searches: ['Cafes', 'Vinyl'],
+          limit: 4,
+        };
+        await getRecommendedCafesByLocationFiltersSearches(requestBody, dispatch);
+      }
+    };
+    apiCallToGetCafesByLocationFiltersSearches();
+  }, [filterDataByUser, hasFilters, userLocation]);
 
   // Handle search submission (API call)
   const handleSearchSubmit = async () => {
@@ -57,59 +82,59 @@ function SearchCafe({ navigation }: Props) {
       }
     }
   };
- 
 
-  // Filter data based on search query (local filtering)
+  // Filter data based on search query and current data source
   useEffect(() => {
+    const currentData = getCurrentDataSource();
+    
     if (searchQuery.trim().length === 0) {
-      setFilteredData(baseData);
+      setFilteredData(currentData);
     } else {
-      const filtered = baseData.filter(
+      const filtered = currentData.filter(
         (cafe: any) =>
           cafe?.cafe_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           cafe?.address?.toLowerCase().includes(searchQuery.toLowerCase()),
       );
       setFilteredData(filtered);
     }
-  }, [searchQuery, baseData, hasSearched]);
-
-  useEffect(() => {
-    const apiCallToGetCafesByLocationFiltersSearches = async () => {
-      if (Object.keys(filterDataByUser).length === 0) {
-        return;
-      }
-      const requestBody = {
-        ...userLocation,
-        filter: filterDataByUser,
-        recent_searches: ['Cafes', 'Vinyl'],
-        limit: 4,
-      };
-      await getRecommendedCafesByLocationFiltersSearches(requestBody, dispatch);
-    };
-    apiCallToGetCafesByLocationFiltersSearches();
-    return () => {};
-  }, [filterDataByUser]);
+  }, [searchQuery, cafeList, recommendedCafesByLocationFiltersAndSearches, cafeListBySearch, hasSearched, hasFilters]);
 
   // Clear search
   const handleClearSearch = () => {
     setSearchQuery('');
     setHasSearched(false);
-    setFilteredData([]);
     navigation.goBack();
   };
-
-  // Initialize filtered data when section mounts
-  useEffect(() => {
-    if (!hasSearched) {
-      setFilteredData(cafeList);
-    }
-  }, [cafeList, hasSearched]);
 
   // Handle search input change
   const handleSearchInputChange = (text: string) => {
     setSearchQuery(text);
     if (text.trim().length === 0 && hasSearched) {
       setHasSearched(false);
+    }
+  };
+
+  // Get appropriate heading based on current state
+  const getHeading = () => {
+    if (hasSearched) {
+      return 'Search results';
+    } else if (hasFilters) {
+      return 'Recommendations';
+    } else {
+      return 'Cafes you may like';
+    }
+  };
+
+  // Get appropriate empty message based on current state
+  const getEmptyMessage = () => {
+    if (searchQuery.trim() !== '') {
+      return 'No cafes found matching your search.';
+    } else if (hasSearched) {
+      return 'No cafes found for your search.';
+    } else if (hasFilters) {
+      return 'No recommendations available.';
+    } else {
+      return 'No cafes available.';
     }
   };
 
@@ -133,7 +158,7 @@ function SearchCafe({ navigation }: Props) {
                 autoFocus
                 style={styles.searchInput}
                 placeholderTextColor={'#7A7778'}
-                placeholder="Cafe, mood, location.."
+                placeholder="Search by cafe name..."
                 value={searchQuery}
                 returnKeyType="search"
                 onSubmitEditing={handleSearchSubmit}
@@ -146,15 +171,13 @@ function SearchCafe({ navigation }: Props) {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.searchResultsOutline}>
             <Text style={styles.searchResultHeading}>
-              {hasSearched ? 'Search results' : 'Recommendations'}
+              {getHeading()}
             </Text>
             <View style={styles.filteredItemsOutline}>
               {filteredData.length === 0 ? (
                 <View style={{ width: '100%' }}>
                   <Text style={styles.noCafeText}>
-                    {hasSearched
-                      ? 'No cafes found for your search.'
-                      : 'No cafes available.'}
+                    {getEmptyMessage()}
                   </Text>
                 </View>
               ) : (

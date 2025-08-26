@@ -15,7 +15,7 @@ import { CafeDataType } from '../../../../../api/auth/main/safety-types';
 import {
   getCafeList,
   getCafeListBySelectedFilters,
-} from '../../../../../api/auth/main/cafesApi';
+} from '../../../../../api/auth/main/cafesApi'; 
 
 const ExploreCafeSpaces = () => {
   const dispatch = useDispatch();
@@ -52,14 +52,15 @@ const ExploreCafeSpaces = () => {
           <Text style={styles.sectionSecAddress}>
             1231 Music experience near you
           </Text>
+       
         </View>
-        <View style={styles.rowBetweenCenter}>
+        {/* <View style={styles.rowBetweenCenter}>
           <Text style={styles.viewAllText}>View all</Text>
           <Image
             source={require('../../../../../assets/images/rightArrow.png')}
             style={styles.viewAllIcon}
           />
-        </View>
+        </View> */} 
       </View>
       <View style={styles.cafeCardsOutline}>
         <FlatList

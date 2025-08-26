@@ -3,7 +3,8 @@ import { MultiSelect } from 'react-native-element-dropdown';
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { futura } from '../../constants/fonts_exports';
 import { appColors } from '../../constants/colors';
-import { isAndroid } from '../../constants/variables'; 
+import { isAndroid } from '../../constants/variables';
+import {MaterialDesignIcons as MDIcon} from '@react-native-vector-icons/material-design-icons';
 
 // Reusable MultiSelect Component
 interface MultiSelectProps {
@@ -24,40 +25,63 @@ const CustomMultiSelect: React.FC<MultiSelectProps> = ({
   data,
   onChange,
   maxSelect,
-  searchPlaceholder = "Search...",
+  searchPlaceholder = 'Search...',
   enableSearch = true,
 }) => {
+  // Check if an item is selected
+  const isSelected = (itemValue: string) => {
+    return value.includes(itemValue);
+  };
+
   return (
     <View style={styles.multiSelectOutline}>
       <Text style={styles.label}>{label}</Text>
       <MultiSelect
         data={data}
         value={value}
-        onChange={onChange}
-        labelField="label"
+        keyboardAvoiding
         valueField="value"
-        placeholder={placeHolder}
-        searchPlaceholder={searchPlaceholder}
+        labelField="label"
+        onChange={onChange}
         maxSelect={maxSelect}
         search={enableSearch}
-        keyboardAvoiding
+        placeholder={placeHolder}
         style={styles.multiSelect}
-        activeColor='#ada493'
+        itemTextStyle={styles.itemText}
+        selectedStyle={styles.selectedStyle}
+        searchPlaceholder={searchPlaceholder}
         containerStyle={styles.containerStyle}
         selectedTextStyle={styles.selectedText}
-        itemTextStyle={styles.itemText}
+        inputSearchStyle={styles.inputSearchStyle}
+        activeColor={appColors.dropDownItemActiveColor}
         placeholderStyle={styles.multiSelectPlaceHolder}
         itemContainerStyle={styles.multiSelectItemContainerStyle}
-        selectedStyle={styles.selectedStyle}
-        inputSearchStyle={styles.inputSearchStyle}
+        // Custom rendering for dropdown items
+        renderItem={(item) => (
+          <View style={styles.itemContainer}>
+            <MDIcon
+              name={
+                isSelected(item.value)
+                  ? 'check-circle'
+                  : 'checkbox-blank-circle-outline'
+              }
+              size={24}
+              color={appColors.primary}
+            />
+            <Text style={styles.itemTextWithIcon}>{item.label}</Text>
+          </View>
+        )}
         // Custom rendering for selected items
         renderSelectedItem={(item, unSelect) => (
           <View style={styles.selectedItemContainer}>
             <Text style={styles.selectedItemText}>{item.label}</Text>
-            <TouchableOpacity style={styles.removeButton} onPress={() => unSelect && unSelect(item)}>
+            <TouchableOpacity
+              style={styles.removeButton}
+              onPress={() => unSelect && unSelect(item)}
+            >
               <Image
                 source={require('../../assets/images/close.png')}
-                style={{ height: 12, width: 12, resizeMode: 'contain', tintColor: appColors.primary }}
+                style={styles.closeIcon}
               />
             </TouchableOpacity>
           </View>
@@ -81,7 +105,7 @@ const styles = StyleSheet.create({
     padding: 12,
     fontFamily: futura.medium,
     borderRadius: 8,
-    marginTop: 8, 
+    marginTop: 8,
   },
   selectedText: {
     fontFamily: futura.medium,
@@ -92,6 +116,19 @@ const styles = StyleSheet.create({
     color: '#221F20',
     fontSize: 13,
   },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  itemTextWithIcon: {
+    fontFamily: futura.medium,
+    color: '#221F20',
+    fontSize: 13,
+    marginLeft: 12,
+    flex: 1,
+  },
   multiSelectPlaceHolder: {
     fontFamily: futura.book,
     color: '#221F20',
@@ -99,7 +136,7 @@ const styles = StyleSheet.create({
   multiSelectItemContainerStyle: {
     backgroundColor: appColors.dropDownColor,
     fontFamily: futura.medium,
-    borderRadius: 8, 
+    borderRadius: 8,
   },
   containerStyle: {
     marginTop: isAndroid ? -20 : 0,
@@ -142,6 +179,12 @@ const styles = StyleSheet.create({
     fontFamily: futura.medium,
     color: '#221F20',
     fontSize: 16,
+  },
+  closeIcon: {
+    height: 12,
+    width: 12,
+    resizeMode: 'contain',
+    tintColor: appColors.primary,
   },
 });
 

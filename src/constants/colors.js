@@ -4,6 +4,7 @@ export const appColors = {
 
   //dropDown
   dropDownColor: '#C9BDAA',
+  dropDownItemActiveColor: '#ada493',
   //buttons
   primaryButton: '#561214'
 };

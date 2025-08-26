@@ -1,12 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-  GestureResponderEvent,
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, View,} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { GroupExperienceStack, HomeStack } from '../../navigations/routes';
 import HomeScreen from '../../screens/Main/HomeScreen/HomeScreen';
@@ -19,26 +12,21 @@ interface TabIconProps {
   inActiveImageSource: ImageSourcePropType; // The source of the image (could be a URI or a local image)
 }
 
-// Reusable TabIcon Component
+// TabIcon Component
 const TabIcon: React.FC<TabIconProps> = ({
   focused,
   activeImageSource,
   inActiveImageSource,
 }) => (
   <View style={styles.tabButton}>
-    <LinearGradient
-      colors={
-        focused
-          ? ['transparent', 'transparent']
-          : ['transparent', 'transparent']
-      } // Gradient for active tab
+   <View
       style={styles.iconContainer}
     >
       <Image
         source={focused ? activeImageSource : inActiveImageSource}
         style={[styles.tabIcon, focused && styles.activeIcon]} // Apply active icon style
       />
-    </LinearGradient>
+    </View>
   </View>
 );
 

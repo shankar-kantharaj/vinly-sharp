@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { FilterDataType } from "../../api/auth/main/safety-types";
+import { FilterDataTypeFromApi, FilterValuesForApiReqBody } from "../../api/auth/main/safety-types";
 
 const filterReducer = createSlice({
     name: 'filter',
     initialState: {
-       filterDataFromApi: {} as FilterDataType,
-       filterDataByUser: {} as FilterDataType,
+       filterDataFromApi: {} as FilterDataTypeFromApi,
+       filterDataByUser: {} as FilterValuesForApiReqBody,
     },
     reducers: {
         setFilterDataFromApi(state, action) {

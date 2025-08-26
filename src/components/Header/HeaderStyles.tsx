@@ -55,8 +55,7 @@ export const styles = StyleSheet.create({
     },
   searchInput: {
     marginLeft: 8,
-    fontFamily: futura.medium,
-    marginTop: 5,
+    fontFamily: futura.medium, 
     color: '#7A7778',
     paddingVertical: 10,
     paddingLeft: 5,

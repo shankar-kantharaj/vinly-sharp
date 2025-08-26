@@ -10,45 +10,36 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { futura } from '../../constants/fonts_exports';
-import CustomButton from '../Buttons/CustomButtons';
-import { appColors } from '../../constants/colors';
+import CustomButton from '../Buttons/CustomButtons'; 
 import CustomDropdown from '../DropDown/CustomDropDown';
 import CustomMultiSelect from '../DropDown/CustomMutliSelect';
-import { FilterDataType } from '../../api/auth/main/safety-types';
+import {
+  FilterDataTypeFromApi,
+  FilterValuesForApiReqBody,
+} from '../../api/auth/main/safety-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { setFilterDataByUser } from '../../redux/reducers/filterReducer';
 
 const height = Dimensions.get('window').height;
 
-// Updated FilterValues to match API request body
-interface FilterValues {
-  availability: string ;
-  amenities: string[];
-  music_genre: string[];
-  category: string;
-  location_id: string;
-  timings: {
-    day: string;
-    start_time: string;
-    end_time: string;
-  };
-  sortby: string;
-  latitude: number;
-  longitude: number;
-}
-
 interface BottomSheetProps {
   onClose: (event: GestureResponderEvent) => void;
-  onApplyFilters?: (filters: FilterValues) => void;
-  filterData?: FilterDataType;
+  onApplyFilters?: (filters: FilterValuesForApiReqBody) => void;
+  filterData?: FilterDataTypeFromApi;
   userLocation?: { latitude: number; longitude: number }; // Add user location prop
 }
 
-const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({ 
-  onClose, 
+const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
+  onClose,
   onApplyFilters,
   filterData,
-  userLocation = { latitude: 12.9661, longitude: 77.5846 } // Default location
+  userLocation = { latitude: 12.9661, longitude: 77.5846 }, // Default location
 }) => {
-  const [filters, setFilters] = useState<FilterValues>({
+  const { filterDataByUser } = useSelector((state: RootState) => state.filter);
+  const dispatch = useDispatch();
+  // Define initial filter state
+  const initialFilters: FilterValuesForApiReqBody = {
     availability: 'Available',
     amenities: [],
     music_genre: [],
@@ -62,41 +53,44 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
     sortby: '',
     latitude: userLocation.latitude,
     longitude: userLocation.longitude,
-  });
+  };
 
-  // // Default data if no API response is provided
-  // const defaultFilterDataType: FilterDataType = {
-  //   availability: ["Available", "Unavailable"],
-  //   amenities: ["Lunch", "Dinner", "Barbecue", "WiFi", "Parking", "Live Music"],
-  //   music_genre: ["Instrumental", "Rock", "Pop", "Jazz", "Classical", "Electronic"],
-  //   sortby: ["Distance: Near to Far", "Rating: High to Low", "Price: Low to High"],
-  //   category: ["Flagship", "All Cafes"],
-  //   timings: {
-  //     days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  //     start_times: ["09:00", "10:00", "11:00", "12:00"],
-  //     end_times: ["21:00", "22:00", "23:00", "00:00"]
-  //   },
-  //   servicable_locations: [
-  //     { location_id: "uuid-12", location_name: "Bangalore" },
-  //     { location_id: "uuid-15", location_name: "Mumbai" }
-  //   ]
-  // };
- 
+  const [filters, setFilters] =
+    useState<FilterValuesForApiReqBody>(initialFilters);
+
+  // Initialize filters with existing filterDataByUser values on component mount
+  useEffect(() => {
+    setFilters({
+      availability: 'Available',
+      amenities: filterDataByUser.amenities || [],
+      music_genre: filterDataByUser.music_genre || [],
+      category: filterDataByUser.category || '',
+      location_id: filterDataByUser.location_id || '',
+      timings: {
+        day: filterDataByUser.timings?.day || '',
+        start_time: filterDataByUser.timings?.start_time || '',
+        end_time: filterDataByUser.timings?.end_time || '',
+      },
+      sortby: filterDataByUser.sortby || '',
+      latitude: userLocation.latitude,
+      longitude: userLocation.longitude,
+    });
+  }, [filterDataByUser]);
 
   // Convert data for dropdown format
   const locationOptions = filterData?.servicable_locations.map(loc => ({
     label: loc.location_name,
-    value: loc.location_id
+    value: loc.location_id,
   }));
-  
+
   const amenityOptions = filterData?.amenities.map(item => ({
     label: item,
-    value: item
+    value: item,
   }));
 
   const musicGenreOptions = filterData?.music_genre.map(item => ({
     label: item,
-    value: item
+    value: item,
   }));
 
   // Map sortby values to match API expectations
@@ -105,31 +99,31 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
     if (item.includes('Distance')) apiValue = 'distance';
     else if (item.includes('Rating')) apiValue = 'rating';
     else if (item.includes('Price')) apiValue = 'price';
-    
+
     return {
       label: item,
-      value: apiValue
+      value: apiValue,
     };
   });
 
   const categoryOptions = filterData?.category.map(item => ({
     label: item,
-    value: item
+    value: item,
   }));
 
   const dayOptions = filterData?.timings.days.map(day => ({
     label: day,
-    value: day
+    value: day,
   }));
 
   const startTimeOptions = filterData?.timings.start_times.map(time => ({
     label: time,
-    value: time
+    value: time,
   }));
 
   const endTimeOptions = filterData?.timings.end_times.map(time => ({
     label: time,
-    value: time
+    value: time,
   }));
 
   // Update filter change handlers to match new structure
@@ -140,13 +134,13 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
         ...prev,
         timings: {
           ...prev.timings,
-          [timingKey]: value
-        }
+          [timingKey]: value,
+        },
       }));
     } else {
       setFilters(prev => ({
         ...prev,
-        [key]: value
+        [key]: value,
       }));
     }
   };
@@ -166,24 +160,10 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
   };
 
   const handleClearFilters = () => {
-    setFilters({
-      availability: 'Available',
-      amenities: [],
-      music_genre: [],
-      category: '',
-      location_id: '',
-      timings: {
-        day: '',
-        start_time: '',
-        end_time: '',
-      },
-      sortby: '',
-      latitude: userLocation.latitude,
-      longitude: userLocation.longitude,
-    });
+    dispatch(setFilterDataByUser(initialFilters)); 
   };
- 
 
+  console.log(filterDataByUser, 'filterDataByUserfilterDataByUser');
   return (
     <View style={styles.outline}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -204,7 +184,9 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
           placeHolder="Select Location"
           data={locationOptions || []}
           value={filters.location_id}
-          onChange={(selectedItem) => handleFilterChange('location_id', selectedItem.value)}
+          onChange={selectedItem =>
+            handleFilterChange('location_id', selectedItem.value)
+          }
         />
 
         {/* Category Filter */}
@@ -213,17 +195,19 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
           placeHolder="Select category"
           data={categoryOptions || []}
           value={filters.category}
-          onChange={(selectedItem) => handleFilterChange('category', selectedItem.value)}
+          onChange={selectedItem =>
+            handleFilterChange('category', selectedItem.value)
+          }
         />
-  
+
         {/* Music Genre Filter */}
         <CustomMultiSelect
           label={'Music Genre'}
           placeHolder="Select music genres"
           data={musicGenreOptions || []}
           value={filters.music_genre}
-          onChange={(selected) => handleFilterChange('music_genre', selected)}
-        /> 
+          onChange={selected => handleFilterChange('music_genre', selected)}
+        />
 
         {/* Amenities Filter */}
         <CustomMultiSelect
@@ -231,19 +215,21 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
           placeHolder="Select amenities"
           data={amenityOptions || []}
           value={filters.amenities}
-          onChange={(selected) => handleFilterChange('amenities', selected)}
+          onChange={selected => handleFilterChange('amenities', selected)}
         />
 
         {/* Timing Filters */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionHeading}>Timing Preferences</Text>
-          
+
           <CustomDropdown
             label={'Day'}
             placeHolder="Select day"
             data={dayOptions || []}
             value={filters.timings.day}
-            onChange={(selectedItem) => handleFilterChange('timings.day', selectedItem.value)}
+            onChange={selectedItem =>
+              handleFilterChange('timings.day', selectedItem.value)
+            }
           />
 
           <View style={styles.timeRow}>
@@ -253,7 +239,9 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
                 placeHolder="Start"
                 data={startTimeOptions || []}
                 value={filters.timings.start_time}
-                onChange={(selectedItem) => handleFilterChange('timings.start_time', selectedItem.value)}
+                onChange={selectedItem =>
+                  handleFilterChange('timings.start_time', selectedItem.value)
+                }
               />
             </View>
             <View style={styles.timeColumn}>
@@ -262,7 +250,9 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
                 placeHolder="End"
                 data={endTimeOptions || []}
                 value={filters.timings.end_time}
-                onChange={(selectedItem) => handleFilterChange('timings.end_time', selectedItem.value)}
+                onChange={selectedItem =>
+                  handleFilterChange('timings.end_time', selectedItem.value)
+                }
               />
             </View>
           </View>
@@ -274,7 +264,9 @@ const FilterCafeBottomSheet: React.FC<BottomSheetProps> = ({
           placeHolder="Select sorting option"
           data={sortByOptions || []}
           value={filters.sortby}
-          onChange={(selectedItem) => handleFilterChange('sortby', selectedItem.value)}
+          onChange={selectedItem =>
+            handleFilterChange('sortby', selectedItem.value)
+          }
         />
 
         {/* Action Buttons */}

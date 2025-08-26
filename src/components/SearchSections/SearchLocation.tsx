@@ -26,7 +26,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUserLocation } from '../../redux/reducers/userReducer';
 import { getCafeListByLocation } from '../../api/auth/main/cafesApi';
 import { RootState } from '../../redux/store';
-import { CafeListByLocationType, CafeDataType } from '../../api/auth/main/safety-types';
+import {
+  CafeListByLocationType,
+  CafeDataType,
+} from '../../api/auth/main/safety-types';
 import CafeCard from '../CafeCard/CafeCard';
 
 interface Props {
@@ -37,18 +40,24 @@ export default function SearchLocation({ navigation }: Props) {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const { userLocation } = useSelector((state: RootState) => state.userDetails);
-  const { cafeList,cafeListByLocation } = useSelector((state: RootState) => state.cafes);
+  const { cafeList, cafeListByLocation } = useSelector(
+    (state: RootState) => state.cafes,
+  );
   const [showEnableLocationModal, setShowEnableLocationModal] = useState(false);
-  const [filteredCafes, setFilteredCafes] =
-    useState<CafeListByLocationType[]>(cafeListByLocation);
+  const [filteredCafes, setFilteredCafes] = useState<(CafeListByLocationType | CafeDataType)[]>([]);
+
+  // Check if user location is available (not 0,0)
+  const hasUserLocation = userLocation.latitude !== 0 && userLocation.longitude !== 0;
 
   useEffect(() => {
     const apiCallToGetLocationBasedCafes = async () => {
-      await getCafeListByLocation(userLocation, dispatch);
+      if (hasUserLocation) {
+        await getCafeListByLocation(userLocation, dispatch);
+      }
     };
 
     apiCallToGetLocationBasedCafes();
-  }, []);
+  }, [hasUserLocation, userLocation]);
 
   // Handle back button press for navigation
   useEffect(() => {
@@ -59,15 +68,23 @@ export default function SearchLocation({ navigation }: Props) {
     return () => sub.remove();
   }, [navigation]);
 
-  // Update the filtered cafes based on search query
+  // Initialize and update filtered cafes based on search query and location availability
   useEffect(() => {
-    const result = cafeListByLocation.filter(
-      (cafe: CafeListByLocationType) =>
-        cafe.cafe_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cafe.address.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
-    setFilteredCafes(result);
-  }, [searchQuery]);
+    const cafesToFilter = hasUserLocation ? cafeListByLocation : cafeList;
+    
+    if (searchQuery.trim() === '') {
+      setFilteredCafes(cafesToFilter);
+    } else {
+      const result = cafesToFilter.filter((cafe: CafeListByLocationType | CafeDataType) => {
+        const cafeName = cafe.cafe_name.toLowerCase();
+        const cafeAddress = cafe.address.toLowerCase();
+        const query = searchQuery.toLowerCase();
+        
+        return cafeName.includes(query) || cafeAddress.includes(query);
+      });
+      setFilteredCafes(result);
+    }
+  }, [searchQuery, cafeList, cafeListByLocation, hasUserLocation]);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -76,6 +93,31 @@ export default function SearchLocation({ navigation }: Props) {
   const handleClearSearch = () => {
     setSearchQuery('');
     navigation.goBack();
+  };
+
+  const renderCafeItem = ({ item }: { item: CafeListByLocationType | CafeDataType }) => {
+    if (hasUserLocation && 'distance' in item) {
+      // Render with location when user location is available
+      return (
+        <CafeCardWithLocation
+          cafeName={item.cafe_name}
+          cafeAddress={item.address}
+          cafeImage={require('../../assets/images/cafe-image-rec.png')}
+          isFavorite={false}
+          distance={item.distance}
+        />
+      );
+    } else {
+      // Render without location when user location is not available
+      return (
+        <CafeCard
+          cafeName={item.cafe_name}
+          cafeAddress={item.address}
+          cafeImage={require('../../assets/images/cafe-image-rec.png')}
+          isFavorite={true}
+        />
+      );
+    }
   };
 
   return (
@@ -113,7 +155,7 @@ export default function SearchLocation({ navigation }: Props) {
                 autoFocus
                 style={styles.searchInput}
                 placeholderTextColor={'#7A7778'}
-                placeholder="Cafe, mood, location.."
+                placeholder="Search by cafe name..."
                 value={searchQuery}
                 onChangeText={setSearchQuery}
               />
@@ -128,7 +170,7 @@ export default function SearchLocation({ navigation }: Props) {
                   source={require('../../assets/images/location-white.png')}
                   style={styles.leftArrowIcon}
                 />
-                {userLocation.latitude == 0 && userLocation.longitude == 0 ? (
+                {!hasUserLocation ? (
                   <Text style={styles.useLocationText}>
                     Use current location
                   </Text>
@@ -155,66 +197,24 @@ export default function SearchLocation({ navigation }: Props) {
           </View>
         </SafeAreaView>
 
-        {/* Scrollable Content */}
-        {/* <ScrollView style={styles.scrollContent}>
-          <View style={styles.searchResultsOutline}>
-            <Text style={styles.searchResultHeading}>Suggestions</Text>
-            <View style={styles.filteredItemsOutline}>
-              {filteredCafes.length === 0 ? (
-                <View style={{ width: '100%' }}>
-                  <Text style={styles.noCafeText}>No cafes found.</Text>
-                </View>
-              ) : (
-                filteredCafes.map((cafe, index) => (
-                  <CafeCardWithLocation
-                    key={index}
-                    cafeName={cafe.cafeName}
-                    cafeAddress={cafe.cafeAddress}
-                    cafeImage={cafe.cafeImage}
-                    distance={ite}
-                    isFavorite={cafe.isFavorite}
-                  />
-                ))
-              )}
+        <Text style={styles.searchResultHeading}>
+          {hasUserLocation ? 'Nearby Cafes' : 'All Cafes'}
+        </Text>
+        
+        <FlatList
+          data={filteredCafes}
+          renderItem={renderCafeItem}
+          keyExtractor={(item, index) => `${item.cafe_name}-${index}`}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={{ alignItems: 'center', marginTop: 50 }}>
+              <Text style={styles.noCafeText}>
+                {searchQuery.trim() !== '' ? 'No cafes found matching your search.' : 'No cafes available.'}
+              </Text>
             </View>
-          </View>
-        </ScrollView> */}
-
-        <Text style={styles.searchResultHeading}>Suggestions</Text>
-        {userLocation.latitude !== 0 && userLocation.longitude !== 0 ? (
-          <FlatList
-            data={filteredCafes}
-            renderItem={({ item }: { item: CafeListByLocationType }) => (
-              <CafeCardWithLocation
-                cafeName={item.cafe_name}
-                cafeAddress={item.address}
-                cafeImage={require('../../assets/images/cafe-image-rec.png')}
-                isFavorite={false}
-                distance={item.distance}
-              />
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            showsVerticalScrollIndicator={false}
-          />
-        ) : (
-          <FlatList
-            scrollEnabled
-            data={cafeList}
-            renderItem={({ item }: { item: CafeDataType }) => {
-              return (
-                <CafeCard
-                  cafeName={item?.cafe_name}
-                  cafeAddress={item?.address}
-                  cafeImage={require('../../assets/images/cafe-image-rec.png')}
-                  isFavorite={true}
-                />
-              );
-            }}
-            ListEmptyComponent={<Text>No cafes found</Text>}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
+          }
+        />
       </KeyboardAvoidingView>
 
       {/* Enable Location Modal */}

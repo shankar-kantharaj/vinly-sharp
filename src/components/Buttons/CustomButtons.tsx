@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, GestureResponderEvent, Text, ViewStyle, T
 import { futura } from '../../constants/fonts_exports';
 import { appColors } from '../../constants/colors';
 
-// Define types for the props
+// props types def
 interface CustomButtonProps {
   text: string; // Required prop: Text displayed on the button
   onPress: (event: GestureResponderEvent) => void; // Required prop: onPress event handler

@@ -39,7 +39,7 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
       colors={['#251f1f', '#321a1c']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      style={[styles.gradientContainer, { width: cardWidth, height: 130 }]}
+      style={[styles.gradientContainer, { width: cardWidth }]}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   gradientContainer: {
+    height: 130,
     borderRadius: 10,
     overflow: 'hidden',
   },

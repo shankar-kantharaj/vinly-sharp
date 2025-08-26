@@ -83,7 +83,7 @@ const Header = () => {
             source={require('../../assets/images/search.png')}
             style={styles.searchIcon}
           />
-          <Text style={styles.searchInput}>Cafe, mood, location..</Text>
+          <Text style={styles.searchInput}>Search for a cafe...</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {

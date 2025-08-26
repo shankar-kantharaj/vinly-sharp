@@ -11,17 +11,29 @@ const GradientButton = (props:ButtonProps) => {
     const {text} = props;
   return (
     <LinearGradient 
-      colors={['#656263','#242021']}
-      // colors={['#DE5461', '#581415']}
+      colors={['#656263','#242021']} 
       start={{ x: 0, y: 0 }} // Starting point (left)
       end={{ x: 1, y: 0 }}
-      style={{ borderRadius: 6, borderColor: '#707070', borderWidth: 1.5, }}
+      style={styles.buttonStyle}
     >
-      <Text style={{color: 'white',fontFamily: bauhaus.bold, fontSize: 13,paddingHorizontal: 20, paddingVertical: 5}}>{text}</Text>
+      <Text style={styles.buttonTextStyle}>{text}</Text>
     </LinearGradient>
   );
 };
 
 export default GradientButton;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  buttonStyle: {
+    borderRadius: 6,
+    borderColor: '#707070',
+    borderWidth: 1.5,
+  },
+  buttonTextStyle: {
+    color: 'white',
+    fontFamily: bauhaus.bold,
+    fontSize: 13,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+  },
+});
