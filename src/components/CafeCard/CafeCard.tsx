@@ -8,6 +8,7 @@ interface CafeCardProps {
   cafeAddress: string;
   cafeImage: any; // Image source can be either a static import or URL (use `any` type for flexibility)
   isFavorite: boolean;
+  distance?: number | string;
 }
 
 // CafeCard Component
@@ -16,6 +17,7 @@ const CafeCard: React.FC<CafeCardProps> = ({
   cafeAddress,
   cafeImage,
   isFavorite,
+  distance,
 }) => {
   return (
     <View style={styles.cardOutline}>

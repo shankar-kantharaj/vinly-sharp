@@ -5,8 +5,7 @@ import { styles } from './HomeStyles';
 import Header from '../../../components/Header/Header';
 import Recommendation from './Sections/RecommendedForYou/RecommendedForYou';
 import ExploreCafeSpaces from './Sections/ExploreCafeSpaces/ExploreCafeSpaces';
-import { appColors } from '../../../constants/colors';
-import { getCafeList, getCafeListBySelectedFilters } from '../../../api/auth/main/cafesApi';
+import { appColors } from '../../../constants/colors'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 

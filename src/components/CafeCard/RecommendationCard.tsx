@@ -57,7 +57,7 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
           {cafeName}
         </Text>
         <Text
-          style={[styles.cafeAddress, { width: cardWidth - 50 }]}
+          style={[styles.cafeAddress, { width: cardWidth - 20 }]}
           numberOfLines={1}
           ellipsizeMode="tail"
         >
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   cafeName: {
     color: 'white',
-    fontFamily: futura.semi,
+    fontFamily: futura.medium,
     fontSize: 14,
     marginBottom: 2,
   },

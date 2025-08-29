@@ -5,8 +5,8 @@ const userDetailsReducer = createSlice({
     initialState: {
        userType: 'Guest User',
        userLocation: {
-           latitude: 0,
-           longitude: 0
+           latitude: 12.9716,
+           longitude: 77.5946
        }
     },
     reducers: {

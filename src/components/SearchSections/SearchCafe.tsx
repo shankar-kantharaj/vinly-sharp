@@ -9,8 +9,8 @@ import {
   Image,
   TouchableOpacity,
   Text,
-  TextInput,
-  ScrollView,
+  TextInput, 
+  FlatList,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CafeCard from '../CafeCard/CafeCard';
@@ -18,7 +18,7 @@ import { isAndroid } from '../../constants/variables';
 import { futura } from '../../constants/fonts_exports';
 import {
   getCafeListBySearch,
-  getRecommendedCafesByLocationFiltersSearches,
+  getRecommendations,
 } from '../../api/auth/main/cafesApi';
 import { RootState } from '../../redux/store';
 
@@ -35,69 +35,66 @@ function SearchCafe({ navigation }: Props) {
   // Get data from Redux store
   const { userLocation } = useSelector((state: RootState) => state.userDetails);
   const { filterDataByUser } = useSelector((state: RootState) => state.filter);
-  const {
-    cafeList,
-    cafeListBySearch,
-    recommendedCafesByLocationFiltersAndSearches,
-  } = useSelector((state: RootState) => state.cafes);
+  const { recommendations, cafeListBySearch } = useSelector(
+    (state: RootState) => state.cafes,
+  );
 
-  // Check if filterDataByUser has data (not initial empty state)
-  const hasFilters = Object.keys(filterDataByUser).length > 0;
+  const recommendationsData = recommendations?.data || [];
+  const recommendationsPagination = recommendations?.pagination || {};
+
+  const cafeListBySearchData = cafeListBySearch?.data || [];
+  const cafeListBySearchPagination = cafeListBySearch?.pagination || {};
 
   // Determine current data source based on state
   const getCurrentDataSource = () => {
     if (hasSearched) {
-      return cafeListBySearch;
-    } else if (hasFilters) {
-      return recommendedCafesByLocationFiltersAndSearches;
+      return cafeListBySearchData;
     } else {
-      return cafeList;
+      return recommendationsData;
     }
   };
 
-  // API call for recommended cafes when filters change
+  // API call for recommended cafes when component mounts
   useEffect(() => {
-    const apiCallToGetCafesByLocationFiltersSearches = async () => {
-      if (hasFilters) {
-        const requestBody = {
-          ...userLocation,
-          filter: filterDataByUser,
-          recent_searches: ['Cafes', 'Vinyl'],
-          limit: 4,
-        };
-        await getRecommendedCafesByLocationFiltersSearches(requestBody, dispatch);
+    const apiCallToGetRecommendations = async () => {
+      await getRecommendations(
+        userLocation.latitude,
+        userLocation.longitude,
+        0,
+        20,
+        dispatch,
+      );
+    };
+    apiCallToGetRecommendations();
+  }, []);
+
+  // Auto search when user types more than 2 characters
+  useEffect(() => {
+    const performSearch = async () => {
+      if (searchQuery.trim().length > 1) {
+        try {
+          await getCafeListBySearch(searchQuery.trim(), userLocation, dispatch);
+          setHasSearched(true);
+        } catch (error) {
+          console.error('Search failed:', error);
+        }
+      } else if (searchQuery.trim().length === 0) {
+        // If search is cleared, go back to recommendations
+        setHasSearched(false);
       }
     };
-    apiCallToGetCafesByLocationFiltersSearches();
-  }, [filterDataByUser, hasFilters, userLocation]);
 
-  // Handle search submission (API call)
-  const handleSearchSubmit = async () => {
-    if (searchQuery.trim().length > 0) {
-      try {
-        await getCafeListBySearch(searchQuery.trim(), userLocation, dispatch);
-        setHasSearched(true);
-      } catch (error) {
-        console.error('Search failed:', error);
-      }
-    }
-  };
+    // Debounce the search to avoid too many API calls
+    const timeoutId = setTimeout(performSearch, 300);
+    
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, userLocation, dispatch]);
 
-  // Filter data based on search query and current data source
+  // Filter data based on search query and current data source (local filtering)
   useEffect(() => {
     const currentData = getCurrentDataSource();
-    
-    if (searchQuery.trim().length === 0) {
-      setFilteredData(currentData);
-    } else {
-      const filtered = currentData.filter(
-        (cafe: any) =>
-          cafe?.cafe_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          cafe?.address?.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-      setFilteredData(filtered);
-    }
-  }, [searchQuery, cafeList, recommendedCafesByLocationFiltersAndSearches, cafeListBySearch, hasSearched, hasFilters]);
+    setFilteredData(currentData);
+  }, [recommendations, cafeListBySearch, hasSearched]);
 
   // Clear search
   const handleClearSearch = () => {
@@ -109,17 +106,12 @@ function SearchCafe({ navigation }: Props) {
   // Handle search input change
   const handleSearchInputChange = (text: string) => {
     setSearchQuery(text);
-    if (text.trim().length === 0 && hasSearched) {
-      setHasSearched(false);
-    }
   };
 
   // Get appropriate heading based on current state
   const getHeading = () => {
-    if (hasSearched) {
-      return 'Search results';
-    } else if (hasFilters) {
-      return 'Recommendations';
+    if (hasSearched && searchQuery.trim().length > 2) {
+      return `Search results for "${searchQuery}"`;
     } else {
       return 'Cafes you may like';
     }
@@ -127,12 +119,8 @@ function SearchCafe({ navigation }: Props) {
 
   // Get appropriate empty message based on current state
   const getEmptyMessage = () => {
-    if (searchQuery.trim() !== '') {
-      return 'No cafes found matching your search.';
-    } else if (hasSearched) {
-      return 'No cafes found for your search.';
-    } else if (hasFilters) {
-      return 'No recommendations available.';
+    if (hasSearched && searchQuery.trim().length > 2) {
+      return `No cafes found for "${searchQuery}".`;
     } else {
       return 'No cafes available.';
     }
@@ -142,7 +130,7 @@ function SearchCafe({ navigation }: Props) {
     <View style={styles.fill}>
       <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.fill}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <SafeAreaView style={styles.topArea}>
@@ -158,42 +146,40 @@ function SearchCafe({ navigation }: Props) {
                 autoFocus
                 style={styles.searchInput}
                 placeholderTextColor={'#7A7778'}
-                placeholder="Search by cafe name..."
+                placeholder="Search by cafe name"
                 value={searchQuery}
                 returnKeyType="search"
-                onSubmitEditing={handleSearchSubmit}
                 onChangeText={handleSearchInputChange}
               />
             </View>
           </View>
         </SafeAreaView>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.searchResultsOutline}>
-            <Text style={styles.searchResultHeading}>
-              {getHeading()}
-            </Text>
-            <View style={styles.filteredItemsOutline}>
-              {filteredData.length === 0 ? (
-                <View style={{ width: '100%' }}>
-                  <Text style={styles.noCafeText}>
-                    {getEmptyMessage()}
-                  </Text>
-                </View>
-              ) : (
-                filteredData.map((cafe: any, index: number) => (
-                  <CafeCard
-                    key={index}
-                    cafeName={cafe?.cafe_name}
-                    cafeAddress={cafe?.address}
-                    cafeImage={require('../../assets/images/cafe-image-rec.png')}
-                    isFavorite={cafe?.isFavorite || false}
-                  />
-                ))
-              )}
+        <Text style={styles.searchResultHeading}>{getHeading()}</Text>
+
+        <FlatList
+          data={filteredData}
+          keyExtractor={(item, index) =>
+            item?.id?.toString() || index.toString()
+          } 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.flatListContainer}
+          style={styles.flatListStyle}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.noCafeText}>{getEmptyMessage()}</Text>
             </View>
-          </View>
-        </ScrollView>
+          }
+          renderItem={({ item }) => (
+            <CafeCard
+              cafeName={item?.cafeName}
+              cafeAddress={item?.address}
+              cafeImage={require('../../assets/images/cafe-image-rec.png')}
+              isFavorite={item?.isFavorite || false}
+              distance={item?.distance || 0}
+            />
+          )}
+        />
       </KeyboardAvoidingView>
     </View>
   );
@@ -209,15 +195,6 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   topBar: {},
-  searchResultsOutline: {
-    alignSelf: 'center',
-    marginTop: 15,
-    backgroundColor: '#221F20CC',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    width: '93%',
-    paddingVertical: 10,
-  },
   searchBarOutline: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -241,14 +218,30 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 15,
   },
-  filteredItemsOutline: {
-    flexWrap: 'wrap',
-    flexDirection: 'row',
+  flatListStyle: {
+    backgroundColor: '#221F20CC',
+    marginHorizontal: 12,
+    marginTop: 5,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+  },
+  flatListContainer: {
+    paddingBottom: 20,
+    paddingTop: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
   },
   searchResultHeading: {
     color: '#e4dad7b5',
     fontFamily: futura.medium,
     fontSize: 17,
+    marginTop: 15,
+    marginLeft: 17,
+    marginBottom: 5,
   },
   noCafeText: {
     color: 'white',

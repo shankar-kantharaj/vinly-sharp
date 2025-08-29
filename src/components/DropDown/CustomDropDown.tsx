@@ -8,8 +8,10 @@ import { isAndroid } from '../../constants/variables';
 // Reusable Dropdown Component
 interface DropdownProps {
   label: string;
+  dropdownPosition?: 'top' | 'bottom';
   placeHolder: string;
   value: string | null;
+  enableSearch?: boolean;  
   data: { label: string; value: string }[];
   onChange: (selectedItem: any) => void;
 }
@@ -20,6 +22,8 @@ const CustomDropdown: React.FC<DropdownProps> = ({
   value,
   data,
   onChange,
+  enableSearch = false,
+  dropdownPosition,
 }) => {
   return (
     <View style={styles.dropDownOutline}>
@@ -30,7 +34,10 @@ const CustomDropdown: React.FC<DropdownProps> = ({
         keyboardAvoiding
         labelField="label" 
         valueField="value" 
+        search={enableSearch}
+        searchPlaceholder="Search..."
         onChange={onChange}
+        dropdownPosition={dropdownPosition}
         style={styles.dropDown}
         placeholder={placeHolder}
         containerStyle={styles.containerStyle}

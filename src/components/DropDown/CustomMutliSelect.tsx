@@ -1,36 +1,105 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { futura } from '../../constants/fonts_exports';
 import { appColors } from '../../constants/colors';
 import { isAndroid } from '../../constants/variables';
-import {MaterialDesignIcons as MDIcon} from '@react-native-vector-icons/material-design-icons';
+import { MaterialDesignIcons as MDIcon } from '@react-native-vector-icons/material-design-icons';
 
 // Reusable MultiSelect Component
 interface MultiSelectProps {
   label: string;
-  placeHolder: string;
   value: string[];
+  maxSelect?: number;
+  dropDownPosition?: 'top' | 'bottom';
+  placeHolder: string;
+  enableSearch?: boolean;
+  searchPlaceholder?: string;
   data: { label: string; value: string }[];
   onChange: (selectedItems: string[]) => void;
-  maxSelect?: number; // Optional: Limit maximum selections
-  searchPlaceholder?: string; // Optional: Search placeholder text
-  enableSearch?: boolean; // Optional: Enable/disable search functionality
 }
 
 const CustomMultiSelect: React.FC<MultiSelectProps> = ({
-  label,
-  placeHolder,
-  value,
   data,
+  value,
+  label,
   onChange,
+  dropDownPosition = 'bottom',
   maxSelect,
-  searchPlaceholder = 'Search...',
+  placeHolder,
   enableSearch = true,
+  searchPlaceholder = 'Search...',
 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   // Check if an item is selected
   const isSelected = (itemValue: string) => {
     return value.includes(itemValue);
+  };
+
+  // Get selected items data
+  const getSelectedItemsData = () => {
+    return data.filter(item => value.includes(item.value));
+  };
+
+  // Remove item from selection
+  const removeItem = (itemValue: string) => {
+    const newValue = value.filter(val => val !== itemValue);
+    onChange(newValue);
+  };
+
+  // Toggle expanded view
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  // Custom rendering for selected items with limit of 3
+  const renderSelectedItems = () => {
+    const selectedItems = getSelectedItemsData();
+    const displayItems = isExpanded ? selectedItems : selectedItems.slice(0, 3);
+    const remainingCount = selectedItems.length - 3;
+
+    return (
+      <View style={styles.selectedItemsContainer}>
+        {displayItems.map((item, index) => (
+          <TouchableOpacity 
+            key={`${item.value}-${index}`} 
+            style={styles.selectedItemContainer}
+            onPress={() => removeItem(item.value)}
+          >
+            <Text style={styles.selectedItemText}>{item.label}</Text>
+            <View style={styles.removeButton}>
+              <Image
+                source={require('../../assets/images/close.png')}
+                style={styles.closeIcon}
+              />
+            </View>
+          </TouchableOpacity>
+        ))}
+        
+        {!isExpanded && remainingCount > 0 && (
+          <TouchableOpacity 
+            style={[styles.selectedItemContainer, styles.remainingCountContainer]}
+            onPress={toggleExpanded}
+          >
+            <Text style={[styles.selectedItemText, styles.remainingCountText]}>
+              +{remainingCount} more
+            </Text>
+          </TouchableOpacity>
+        )}
+
+        {isExpanded && selectedItems.length > 3 && (
+          <TouchableOpacity 
+            style={[styles.selectedItemContainer, styles.remainingCountContainer]}
+            onPress={toggleExpanded}
+          >
+            <Text style={[styles.selectedItemText, styles.remainingCountText]}>
+              Show less
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
   };
 
   return (
@@ -43,12 +112,13 @@ const CustomMultiSelect: React.FC<MultiSelectProps> = ({
         valueField="value"
         labelField="label"
         onChange={onChange}
+        dropdownPosition={dropDownPosition}
         maxSelect={maxSelect}
         search={enableSearch}
         placeholder={placeHolder}
         style={styles.multiSelect}
         itemTextStyle={styles.itemText}
-        selectedStyle={styles.selectedStyle}
+        selectedStyle={styles.hiddenSelectedStyle}
         searchPlaceholder={searchPlaceholder}
         containerStyle={styles.containerStyle}
         selectedTextStyle={styles.selectedText}
@@ -57,7 +127,7 @@ const CustomMultiSelect: React.FC<MultiSelectProps> = ({
         placeholderStyle={styles.multiSelectPlaceHolder}
         itemContainerStyle={styles.multiSelectItemContainerStyle}
         // Custom rendering for dropdown items
-        renderItem={(item) => (
+        renderItem={item => (
           <View style={styles.itemContainer}>
             <MDIcon
               name={
@@ -71,22 +141,12 @@ const CustomMultiSelect: React.FC<MultiSelectProps> = ({
             <Text style={styles.itemTextWithIcon}>{item.label}</Text>
           </View>
         )}
-        // Custom rendering for selected items
-        renderSelectedItem={(item, unSelect) => (
-          <View style={styles.selectedItemContainer}>
-            <Text style={styles.selectedItemText}>{item.label}</Text>
-            <TouchableOpacity
-              style={styles.removeButton}
-              onPress={() => unSelect && unSelect(item)}
-            >
-              <Image
-                source={require('../../assets/images/close.png')}
-                style={styles.closeIcon}
-              />
-            </TouchableOpacity>
-          </View>
-        )}
+        // Hide the default selected items rendering with empty view
+        renderSelectedItem={() => <View />}
       />
+      
+      {/* Custom selected items display */}
+      {value.length > 0 && renderSelectedItems()}
     </View>
   );
 };
@@ -142,15 +202,18 @@ const styles = StyleSheet.create({
     marginTop: isAndroid ? -20 : 0,
     borderRadius: 8,
     backgroundColor: appColors.dropDownColor,
-    maxHeight: 200, // Limit dropdown height
+    maxHeight: 250, // Limit dropdown height
   },
-  selectedStyle: {
-    backgroundColor: '#ada493',
-    borderRadius: 15,
-    marginRight: 8,
+  hiddenSelectedStyle: {
+    height: 0,
+    width: 0,
+    opacity: 0,
+    position: 'absolute',
+  },
+  selectedItemsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginTop: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
   },
   selectedItemContainer: {
     flexDirection: 'row',
@@ -162,10 +225,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
+  remainingCountContainer: {
+    backgroundColor: appColors.primary,
+  },
   selectedItemText: {
     fontFamily: futura.medium,
     color: '#221F20',
     fontSize: 14,
+  },
+  remainingCountText: {
+    color: '#FFFFFF', // White text for primary background
   },
   removeButton: {
     marginLeft: 8,

@@ -43,7 +43,15 @@ const CafeCardWithLocation: React.FC<CafeCardProps> = ({
               source={require('../../assets/images/location-white.png')}
               style={styles.locationIcon}
             />
-            <Text style={styles.distanceText}>{distance} Km</Text>
+            <Text style={styles.distanceText}>
+              {' '}
+              {typeof distance === 'number'
+                ? distance.toFixed(2)
+                : Number(distance) === 0
+                ? '0'
+                : Number(distance).toFixed(2)}
+              Km
+            </Text>
           </View>
           <View style={{ paddingLeft: 8, width: '100%' }}>
             <Text style={styles.cafeName}>{cafeName}</Text>
@@ -54,7 +62,7 @@ const CafeCardWithLocation: React.FC<CafeCardProps> = ({
             >
               {cafeAddress}
             </Text>
-          </View>  
+          </View>
         </View>
       </View>
     </LinearGradient>

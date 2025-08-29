@@ -41,4 +41,12 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 7,
   },
+  noDataText:{
+    color: 'white',
+    fontFamily: futura.medium,
+    fontSize: 15,
+    marginTop: 10,
+    textAlign: 'center',
+    width: '100%',
+  }
 });

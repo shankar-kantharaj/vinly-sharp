@@ -72,7 +72,7 @@ const GroupExperience = () => {
               displayData.map((item: CafeDataType, index: number) => (
                 <CafeCard
                   key={index}
-                  cafeName={item?.cafe_name}
+                  cafeName={item?.cafeName}
                   cafeAddress={item?.address}
                   cafeImage={require('../../../assets/images/cafe-image-rec.png')}
                   isFavorite={true}

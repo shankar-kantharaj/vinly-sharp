@@ -48,5 +48,29 @@ export const styles = StyleSheet.create({
     marginTop: 7,
   },
   cafeCardsOutline: { 
-  }
+  },
+  noDataText: {
+    color: '#E4DAD7',
+    fontFamily: futura.medium,
+    fontSize: 15,
+    textAlign: 'center',
+    marginTop: 20,
+  },
+
+footerLoader: {
+  paddingVertical: 20,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+initialLoader: {
+  paddingVertical: 40,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+loadingText: {
+  color: '#E4DAD7',
+  fontSize: 14,
+  marginTop: 8,
+  fontFamily: futura.medium,  
+},
 });

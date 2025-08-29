@@ -1,8 +1,5 @@
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  StyleSheet,
+import { 
+  Image, 
   Text,
   TouchableOpacity,
   View,
@@ -14,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../../redux/store';
 import { CafeDataType } from '../../../../../api/auth/main/safety-types';
-import { getRecommendedCafesByLocationFilters } from '../../../../../api/auth/main/cafesApi';
+import { getRecommendations, getRecommendedCafesByLocationFilters } from '../../../../../api/auth/main/cafesApi';
 
 const RecommendedForYou = () => {
   const navigation = useNavigation();
@@ -22,24 +19,20 @@ const RecommendedForYou = () => {
 
   const { userLocation } = useSelector((state: RootState) => state.userDetails);
   const { filterDataByUser } = useSelector((state: RootState) => state.filter);
-  const { cafeList, recommendedCafesByLocationFilters } = useSelector(
+  const { cafeList, recommendations } = useSelector(
     (state: RootState) => state.cafes,
   );
+
+  const recommendationsData = recommendations?.data || [];
+  const recommendationsPagination = recommendations?.pagination || {};
   useEffect(() => {
-    const apiCallToGetCafesByLocationFilters = async () => {
-      if (Object.keys(filterDataByUser).length === 0) {
-        return;
-      }
-      const requestBody = {
-        ...userLocation,
-        filter: filterDataByUser,
-        limit: 4,
-      };
-      await getRecommendedCafesByLocationFilters(requestBody, dispatch);
+    const apiCallToGetRecommendations = async () => {
+     
+      await getRecommendations(userLocation.latitude, userLocation.longitude, 0, 20, dispatch);
     };
-    apiCallToGetCafesByLocationFilters();
+    apiCallToGetRecommendations();
     return () => {};
-  }, [filterDataByUser]);
+  }, []);
   return (
     <View style={styles.outline}>
       <View style={styles.rowBetweenCenter}>
@@ -58,20 +51,20 @@ const RecommendedForYou = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.cardsOutline}>
-        {(recommendedCafesByLocationFilters &&
-        recommendedCafesByLocationFilters.length > 0
-          ? recommendedCafesByLocationFilters.slice(0, 4)
-          : cafeList.slice(0, 4)
-        ).map((item: CafeDataType, index: number) => (
-          <RecommendationCard
-            key={index}
-            cafeName={item.cafe_name}
-            cafeAddress={item.address}
-            cafeImage={require('../../../../../assets/images/cafe-image.png')}
-            category={'Flagship'}
-            onPress={() => {}}
-          />
-        ))}
+        {recommendationsData && recommendationsData.length > 0 ? (
+          recommendationsData.slice(0, 4).map((item: CafeDataType, index: number) => (
+            <RecommendationCard
+              key={index}
+              cafeName={item.cafeName}
+              cafeAddress={item.address}
+              cafeImage={require('../../../../../assets/images/cafe-image.png')}
+              category={item.isFlagship ? 'Flagship' : ''}
+              onPress={() => {}}
+            />
+          ))
+        ) : (
+          <Text style={styles.noDataText}>There's no recommendations available</Text>
+        )}
       </View>
     </View>
   );

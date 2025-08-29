@@ -40,14 +40,20 @@ export default function SearchLocation({ navigation }: Props) {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const { userLocation } = useSelector((state: RootState) => state.userDetails);
-  const { cafeList, cafeListByLocation } = useSelector(
+  const { cafeList, recommendations } = useSelector(
     (state: RootState) => state.cafes,
   );
   const [showEnableLocationModal, setShowEnableLocationModal] = useState(false);
-  const [filteredCafes, setFilteredCafes] = useState<(CafeListByLocationType | CafeDataType)[]>([]);
+  const [filteredCafes, setFilteredCafes] = useState<
+    (CafeListByLocationType | CafeDataType)[]
+  >([]);
+
+  const recommendationsData = recommendations?.data || [];
+  const recommendationsPagination = recommendations?.pagination || {};
 
   // Check if user location is available (not 0,0)
-  const hasUserLocation = userLocation.latitude !== 0 && userLocation.longitude !== 0;
+  const hasUserLocation =
+    userLocation.latitude !== 0 && userLocation.longitude !== 0;
 
   useEffect(() => {
     const apiCallToGetLocationBasedCafes = async () => {
@@ -70,21 +76,23 @@ export default function SearchLocation({ navigation }: Props) {
 
   // Initialize and update filtered cafes based on search query and location availability
   useEffect(() => {
-    const cafesToFilter = hasUserLocation ? cafeListByLocation : cafeList;
-    
+    const cafesToFilter = hasUserLocation ? recommendationsData : recommendationsData;
+
     if (searchQuery.trim() === '') {
       setFilteredCafes(cafesToFilter);
     } else {
-      const result = cafesToFilter.filter((cafe: CafeListByLocationType | CafeDataType) => {
-        const cafeName = cafe.cafe_name.toLowerCase();
-        const cafeAddress = cafe.address.toLowerCase();
-        const query = searchQuery.toLowerCase();
-        
-        return cafeName.includes(query) || cafeAddress.includes(query);
-      });
+      const result = cafesToFilter.filter(
+        (cafe: CafeListByLocationType | CafeDataType) => {
+          const cafeName = cafe.cafeName.toLowerCase();
+          const cafeAddress = cafe.address.toLowerCase();
+          const query = searchQuery.toLowerCase();
+
+          return cafeName.includes(query) || cafeAddress.includes(query);
+        },
+      );
       setFilteredCafes(result);
     }
-  }, [searchQuery, cafeList, cafeListByLocation, hasUserLocation]);
+  }, [searchQuery, cafeList, hasUserLocation]);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -95,12 +103,16 @@ export default function SearchLocation({ navigation }: Props) {
     navigation.goBack();
   };
 
-  const renderCafeItem = ({ item }: { item: CafeListByLocationType | CafeDataType }) => {
+  const renderCafeItem = ({
+    item,
+  }: {
+    item: CafeListByLocationType | CafeDataType;
+  }) => {
     if (hasUserLocation && 'distance' in item) {
       // Render with location when user location is available
       return (
         <CafeCardWithLocation
-          cafeName={item.cafe_name}
+          cafeName={item.cafeName}
           cafeAddress={item.address}
           cafeImage={require('../../assets/images/cafe-image-rec.png')}
           isFavorite={false}
@@ -111,10 +123,11 @@ export default function SearchLocation({ navigation }: Props) {
       // Render without location when user location is not available
       return (
         <CafeCard
-          cafeName={item.cafe_name}
+          cafeName={item.cafeName}
           cafeAddress={item.address}
           cafeImage={require('../../assets/images/cafe-image-rec.png')}
           isFavorite={true}
+          distance={0}
         />
       );
     }
@@ -155,7 +168,7 @@ export default function SearchLocation({ navigation }: Props) {
                 autoFocus
                 style={styles.searchInput}
                 placeholderTextColor={'#7A7778'}
-                placeholder="Search by cafe name..."
+                placeholder="Search by location, address..."
                 value={searchQuery}
                 onChangeText={setSearchQuery}
               />
@@ -200,17 +213,19 @@ export default function SearchLocation({ navigation }: Props) {
         <Text style={styles.searchResultHeading}>
           {hasUserLocation ? 'Nearby Cafes' : 'All Cafes'}
         </Text>
-        
+
         <FlatList
           data={filteredCafes}
           renderItem={renderCafeItem}
-          keyExtractor={(item, index) => `${item.cafe_name}-${index}`}
+          keyExtractor={(item, index) => `${item.cafeName}-${index}`}
           contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={{ alignItems: 'center', marginTop: 50 }}>
               <Text style={styles.noCafeText}>
-                {searchQuery.trim() !== '' ? 'No cafes found matching your search.' : 'No cafes available.'}
+                {searchQuery.trim() !== ''
+                  ? 'No cafes found matching your search.'
+                  : 'No cafes available.'}
               </Text>
             </View>
           }
